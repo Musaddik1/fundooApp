@@ -11,6 +11,6 @@ import java.util.List;
 public interface UserRepository extends MongoRepository<User, String> 
 {
 	Optional<User> findByEmailId(String emailId);
-	Optional<User> findByUserid(String userid);
+	Optional<User> findByUserId(String userid);
 	
 }

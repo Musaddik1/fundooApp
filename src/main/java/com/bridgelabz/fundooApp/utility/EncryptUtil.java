@@ -2,10 +2,7 @@ package com.bridgelabz.fundooApp.utility;
 
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.model.User;

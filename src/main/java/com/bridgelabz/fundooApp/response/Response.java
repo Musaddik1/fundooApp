@@ -1,21 +1,18 @@
-package com.bridgelabz.fundooApp.model;
+package com.bridgelabz.fundooApp.response;
 
 public class Response {
 
 	private int statuscode;
-	private String token;
 	private String statusMessage;
-	
-	public Response()
-	{
-		
-	}
+	private Object data;
 
-	public Response(int statuscode, String token, String statusMessage) {
+	public Response() {}
+
+	public Response(int statuscode, String statusMessage, Object data) {
 		super();
 		this.statuscode = statuscode;
-		this.token = token;
 		this.statusMessage = statusMessage;
+		this.data = data;
 	}
 
 	public int getStatuscode() {
@@ -26,14 +23,6 @@ public class Response {
 		this.statuscode = statuscode;
 	}
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 	public String getStatusMessage() {
 		return statusMessage;
 	}
@@ -41,5 +30,14 @@ public class Response {
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
 	}
+
+	public Object getData() {
+		return data;
+	}
+	
+	public void setData(Object data) {
+		this.data = data;
+	}
+	
 	
 }

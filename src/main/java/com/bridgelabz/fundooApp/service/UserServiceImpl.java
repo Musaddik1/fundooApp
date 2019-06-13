@@ -11,121 +11,104 @@ import org.springframework.stereotype.Service;
 import com.bridgelabz.fundooApp.dto.ForgetPasswordDto;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
+import com.bridgelabz.fundooApp.exception.UserException;
 import com.bridgelabz.fundooApp.model.Email;
 import com.bridgelabz.fundooApp.model.User;
 import com.bridgelabz.fundooApp.repository.UserRepository;
+import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.utility.EncryptUtil;
+import com.bridgelabz.fundooApp.utility.ITokenGenerator;
 import com.bridgelabz.fundooApp.utility.MailUtil;
-import com.bridgelabz.fundooApp.utility.TokenUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private ModelMapper mapper;
+
 	@Autowired
 	private PasswordEncoder encoder;
+
 	@Autowired
 	MailUtil mailsender;
-	Email email = new Email();
+
+	@Autowired
+	private ITokenGenerator tokenGenerator;
+
 	@Override
-	public User registrationUser(UserDto userDto ) {
+	public Response registrationUser(UserDto userDto, StringBuffer requestUrl) {
 
 		boolean ismail = userRepository.findByEmailId(userDto.getEmailId()).isPresent();
-		String token = null;
-		if (!ismail) 
-		{
-			userDto.setPassword(encoder.encode(userDto.getPassword()));
+		if (!ismail) {
 			User user = mapper.map(userDto, User.class);
-			
+			user.setPassword(encoder.encode(userDto.getPassword()));
 			try {
-				token = TokenUtil.generateToken(user.getUserid());
-				System.out.println(token);
-				 userRepository.save(user);
-				 mailValidation(token,user);
+				User savedUser = userRepository.save(user);
+				String token = tokenGenerator.generateToken(savedUser.getUserid());
+				String activationUrl = requestUrl.substring(0, requestUrl.lastIndexOf("/")) + "/verification/" + token;
+				Email email = new Email();
+				email.setTo("musaddikshaikh10@gmail.com");
+				email.setSubject("Account verification");
+				email.setBody("Please verify your email id by using below link \n" + activationUrl);
+				mailsender.send(email);
+				// return "Verification mail send successfully";
+				return new Response(200, "mail send sucessfully.", null);
 
-					email.setTo("musaddikshaikh10@gmail.com");
-					email.setSubject("Account verification");
-					email.setBody("http://localhost:8080/verification/"+user.getToken());
-					email.getBody();
-					
-					mailsender.send(email);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
-		
-		
-		
-			return user;
-		} else
-		{
-			System.out.println("User already present...");
-			return null;
-		}
-	}
-	
-	public String mailValidation(String token,User user) throws IllegalArgumentException, UnsupportedEncodingException
-	{
-		
-
-			String id = TokenUtil.verifyToken(token);
-			 
-			
-			boolean present=userRepository.findByUserid(user.getUserid()).isPresent();
-			if(present)
-			{
-				System.out.println("Account verified...");
-				
-				user.setToken(token);
-				user.setVerified(true);
-				
-				userRepository.save(user);
-				
-			System.out.println("data saved into database..");
+				throw new UserException("Something not right");
 			}
-			else
-			{
-				System.out.println("not verified..");
-			}
-		
-		return "";
-	}
-	@Override
-	public String loginUser(LoginDto loginDto) {
-
-	
-		boolean isemail = userRepository.findByEmailId(loginDto.getEmailId()).isPresent();
-		
-		User user = userRepository.findByEmailId(loginDto.getEmailId()).get();
-		boolean ispassword = EncryptUtil.isPassword(loginDto, user);
-		if (isemail && ispassword) {
-
-			System.out.println("login successfully...");
-			return "Welcome";
 		} else {
-			System.out.println("Invalid email or password");
-			return null;
+			throw new UserException("User already exist");
 		}
 	}
 
 	@Override
-	public User forgetPassword(String emailId) {
+	public Response loginUser(LoginDto loginDto) {
 
-		boolean isemail=userRepository.findByEmailId(emailId).isPresent();
-		User user=userRepository.findByEmailId(emailId).get();
-		String token=user.getToken();
-		
-		/*
-		 * boolean isemail = userRepository.findByEmailId(emailId).isPresent(); if
-		 * (isemail) { email.setTo("musaddikshaikh10@gmail.com");
-		 * email.setSubject("forgot"); email.setBody("localhost:8080/restSetPassword");
-		 * mailsender.send(email); return null; } else {
-		 * System.out.println("Invalid email "); return null; }
-		 */
-		return null;
+		Optional<User> optUser = userRepository.findByEmailId(loginDto.getEmailId());
+		if (optUser.isPresent()) {
+			User user = optUser.get();
+
+			if (EncryptUtil.isPassword(loginDto, user)) {
+				return new Response(200, "successfully logged in", null);
+			} else {
+				throw new UserException("incorrect password");
+			}
+		} else {
+			throw new UserException("credentials not match");
+		}
+
+	}
+
+	@Override
+	public Response forgetPassword(ForgetPasswordDto forgetPasswordDto, StringBuffer requestUrl) {
+		Optional<User> optUser = userRepository.findByEmailId(forgetPasswordDto.getEmailId());
+		if (optUser.isPresent()) {
+			User user = optUser.get();
+			String id = user.getUserid();
+			try {
+				String token = tokenGenerator.generateToken(id);
+				String activationUrl = requestUrl.substring(0, requestUrl.lastIndexOf("/")) + "/resetpassword" + token;
+				Email email = new Email();
+				email.setTo("musaddikshaikh5@gmail.com");
+				email.setSubject("resetPassword");
+				email.setBody("reset your password \n" + activationUrl);
+				mailsender.send(email);
+				return new Response(200, "Mail Sent", null);
+
+			} catch (UnsupportedEncodingException e) {
+
+				e.printStackTrace();
+				throw new UserException("internal server error");
+			}
+		} else {
+			throw new UserException("User not present..");
+		}
+
 	}
 
 	@Override
@@ -133,5 +116,33 @@ public class UserServiceImpl implements UserService {
 
 		return null;
 	}
+
+	
+	@Override
+	public Response validateUser(String token) {
+		String id = tokenGenerator.verifyToken(token);
+
+		Optional<User> optionalUser = userRepository.findByUserId(id);
+		if (optionalUser.isPresent())
+		{
+			User user = optionalUser.get();
+			user.setVerified(true);
+			userRepository.save(user);
+			return new Response(200,"User verified",null);
+		} else 
+		{
+			return new Response(400, "User not verified", null);
+		}
+	}
+	
+	/*
+	 * @Override public String validateUser(String token) { String id =
+	 * tokenGenerator.verifyToken(token);
+	 * 
+	 * Optional<User> optionalUser = userRepository.findByUserId(id); if
+	 * (optionalUser.isPresent()) { User user = optionalUser.get();
+	 * user.setVerified(true); userRepository.save(user); return "User verified"; }
+	 * else { return "User is not verified"; } }
+	 */
 
 }

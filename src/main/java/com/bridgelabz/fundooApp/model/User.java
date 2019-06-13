@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 	
 	@Id
-	private String userid;
+	private String userId;
 	@Indexed(unique=true)
 	private String emailId;
 	
@@ -17,7 +17,6 @@ public class User {
 	private String phoneNumber;
 	private String address;
 	private boolean isVerified;
-	private String token;
 	
 	public User()
 	{
@@ -35,16 +34,15 @@ public class User {
 	 * @param token
 	 */
 	public User(String userid, String emailId, String name, String password, String phoneNumber, String address,
-			boolean isVerified, String token) {
+			boolean isVerified) {
 		super();
-		this.userid = userid;
+		this.userId = userid;
 		this.emailId = emailId;
 		this.name = name;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
 		this.isVerified = isVerified;
-		this.token = token;
 	}
 
 	/**
@@ -73,24 +71,12 @@ public class User {
 		this.isVerified = isVerified;
 	}
 
-	/**
-	 * @return the token
-	 */
-	public String getToken() {
-		return token;
-	}
-
-	/**
-	 * @param token the token to set
-	 */
-	public void setToken(String token) {
-		this.token = token;
-	}
+	
 	/**
 	 * @return the userid
 	 */
 	public String getUserid() {
-		return userid;
+		return userId;
 	}
 
 
@@ -99,7 +85,7 @@ public class User {
 	 * @param userid the userid to set
 	 */
 	public void setUserid(String userid) {
-		this.userid = userid;
+		this.userId = userid;
 	}
 
 
@@ -145,9 +131,9 @@ public class User {
 	
 	@Override
 	public String toString() {
-		return "User [userid=" + userid + ", emailId=" + emailId + ", name=" + name + ", password=" + password
+		return "User [userid=" + userId + ", emailId=" + emailId + ", name=" + name + ", password=" + password
 				+ ", phoneNumber=" + phoneNumber + ", address=" + address + ", isVerified=" + isVerified + ", token="
-				+ token + "]";
+				+ "]";
 	}
 
 
