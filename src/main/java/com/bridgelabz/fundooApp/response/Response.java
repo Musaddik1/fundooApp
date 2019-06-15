@@ -9,7 +9,7 @@ public class Response {
 	public Response() {}
 
 	public Response(int statuscode, String statusMessage, Object data) {
-		super();
+		
 		this.statuscode = statuscode;
 		this.statusMessage = statusMessage;
 		this.data = data;

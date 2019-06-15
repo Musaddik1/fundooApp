@@ -1,5 +1,7 @@
 package com.bridgelabz.fundooApp.controller;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgelabz.fundooApp.dto.ForgetPasswordDto;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
 import com.bridgelabz.fundooApp.response.Response;
@@ -35,23 +39,31 @@ public class UserController {
 	}
 
 	@GetMapping("/login")
-	public ResponseEntity<Response> loginUser(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<Response> loginUser(@RequestBody LoginDto loginDto)
+			throws IllegalArgumentException, UnsupportedEncodingException {
 
 		Response response = userService.loginUser(loginDto);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/forget")
-	public ResponseEntity<Response> forgotPassword(@RequestBody ForgetPasswordDto forgetPasswordDto,
-			HttpServletRequest request) {
+	public ResponseEntity<Response> forgotPassword(@RequestParam String emailId, HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
-		Response response = userService.forgetPassword(forgetPasswordDto, requestUrl);
+		Response response = userService.forgetPassword(emailId, requestUrl);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+
+	@PutMapping("/resetpassword")
+	public ResponseEntity<Response> resetPassword(@RequestParam String token, @RequestParam String password) {
+
+		Response response = userService.restSetPassword(token, password);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+
 	}
 
 	@GetMapping("/verification/{token}")
 	public ResponseEntity<Response> mailValidation(@PathVariable String token) {
-		Response response=userService.validateUser(token);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+		Response response = userService.validateUser(token);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 }

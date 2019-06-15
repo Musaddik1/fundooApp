@@ -21,7 +21,7 @@ public class JWTTokenGenerator implements ITokenGenerator {
 	public String generateToken(String id) {
 		String token = Jwts.builder()
 				  .setSubject("fundooNotes")
-				  .setExpiration(new Date(System.currentTimeMillis() + 17777000))
+				  .setExpiration(new Date(System.currentTimeMillis()+(100000*60)))
 				  .setId(id)
 				  .signWith(SignatureAlgorithm.HS256, secret_token)
 				  .compact();
@@ -40,25 +40,6 @@ public class JWTTokenGenerator implements ITokenGenerator {
 	
 	
 	
-//	static final String secret_token="fundoo9823139449";
-//	public static String generateToken(String userid) throws IllegalArgumentException, UnsupportedEncodingException
-//	{ 
-//		Algorithm algorithm=Algorithm.HMAC256(secret_token);
-//		String token=JWT.create().withClaim("userid", userid).sign(algorithm);
-//		return token;
-//		
-//		
-//	}
-//	public static String verifyToken(String token ) throws IllegalArgumentException, UnsupportedEncodingException
-//	{
-//		String userid;
-//		Verification verification=JWT.require(Algorithm.HMAC256(TokenUtil.secret_token));
-//		JWTVerifier jwtVerifier=verification.build();
-//		DecodedJWT decodedJWT=jwtVerifier.verify(token);
-//		Claim claim=decodedJWT.getClaim("USERID");
-//		userid=claim.asString();
-//				return userid;
-//	}
-	
+
 	
 }

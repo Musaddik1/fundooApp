@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundooApp.model.Email;
 
@@ -14,6 +13,8 @@ public class MailUtil {
 	@Autowired
 	private  JavaMailSender javaMailSender;
 	
+	@Autowired
+	JWTTokenGenerator tokenGenerator;
 	public  void send(Email email)
 	{
 		SimpleMailMessage simple=new SimpleMailMessage();
@@ -24,8 +25,7 @@ public class MailUtil {
 		javaMailSender.send(simple);
 		System.out.println("Email send successfully....");
 	}
-	/*
-	 * public String getLink(String link,String id) { return
-	 * link+TokenUtil.generateToken(id); }
-	 */
+	
+	
+
 }

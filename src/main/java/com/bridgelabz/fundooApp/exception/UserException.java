@@ -1,11 +1,11 @@
 package com.bridgelabz.fundooApp.exception;
 
-public class UserException extends RuntimeException{
+public class UserException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
 	private String message;
-	
+
 	public UserException(String message) {
 		super(message);
 		this.message = message;
@@ -18,6 +18,5 @@ public class UserException extends RuntimeException{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
+
 }

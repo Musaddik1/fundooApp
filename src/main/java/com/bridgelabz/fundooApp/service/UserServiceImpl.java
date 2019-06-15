@@ -1,14 +1,11 @@
 package com.bridgelabz.fundooApp.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.bridgelabz.fundooApp.dto.ForgetPasswordDto;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
 import com.bridgelabz.fundooApp.exception.UserException;
@@ -48,7 +45,7 @@ public class UserServiceImpl implements UserService {
 			try {
 				User savedUser = userRepository.save(user);
 				String token = tokenGenerator.generateToken(savedUser.getUserid());
-				String activationUrl = requestUrl.substring(0, requestUrl.lastIndexOf("/")) + "/verification/" + token;
+				String activationUrl = getLink(requestUrl) + "/verification/" + token;
 				Email email = new Email();
 				email.setTo("musaddikshaikh10@gmail.com");
 				email.setSubject("Account verification");
@@ -72,11 +69,18 @@ public class UserServiceImpl implements UserService {
 		Optional<User> optUser = userRepository.findByEmailId(loginDto.getEmailId());
 		if (optUser.isPresent()) {
 			User user = optUser.get();
-
-			if (EncryptUtil.isPassword(loginDto, user)) {
-				return new Response(200, "successfully logged in", null);
-			} else {
-				throw new UserException("incorrect password");
+			String userid = user.getUserid();
+			try {
+				String token = tokenGenerator.generateToken(userid);
+				System.out.println(token);
+				if (EncryptUtil.isPassword(loginDto, user)) {
+					return new Response(200, "successfully logged in", null);
+				} else {
+					throw new UserException("incorrect password");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new UserException("something went wrong");
 			}
 		} else {
 			throw new UserException("credentials not match");
@@ -85,14 +89,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Response forgetPassword(ForgetPasswordDto forgetPasswordDto, StringBuffer requestUrl) {
-		Optional<User> optUser = userRepository.findByEmailId(forgetPasswordDto.getEmailId());
+	public Response forgetPassword(String emailId, StringBuffer requestUrl) {
+		Optional<User> optUser = userRepository.findByEmailId(emailId);
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			String id = user.getUserid();
 			try {
 				String token = tokenGenerator.generateToken(id);
-				String activationUrl = requestUrl.substring(0, requestUrl.lastIndexOf("/")) + "/resetpassword" + token;
+				String activationUrl = getLink(requestUrl) + "/resetpassword" + token;
 				Email email = new Email();
 				email.setTo("musaddikshaikh5@gmail.com");
 				email.setSubject("resetPassword");
@@ -100,7 +104,7 @@ public class UserServiceImpl implements UserService {
 				mailsender.send(email);
 				return new Response(200, "Mail Sent", null);
 
-			} catch (UnsupportedEncodingException e) {
+			} catch (Exception e) {
 
 				e.printStackTrace();
 				throw new UserException("internal server error");
@@ -112,37 +116,40 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User restSetPassword(String token, ForgetPasswordDto forgetPasswordDto) {
+	public Response restSetPassword(String token, String password) {
+		String userid = tokenGenerator.verifyToken(token);
+		System.out.println(userid);
+		Optional<User> optUser = userRepository.findByUserId(userid);
+		if (optUser.isPresent()) {
+			User user = optUser.get();
+			user.setPassword(encoder.encode(password));
+			userRepository.save(user);
+			return new Response(200, "password changed successfully..", null);
 
-		return null;
+		}
+
+		return new Response(-1, "token not verified", null);
 	}
 
-	
 	@Override
 	public Response validateUser(String token) {
 		String id = tokenGenerator.verifyToken(token);
 
 		Optional<User> optionalUser = userRepository.findByUserId(id);
-		if (optionalUser.isPresent())
-		{
+		if (optionalUser.isPresent()) {
 			User user = optionalUser.get();
 			user.setVerified(true);
 			userRepository.save(user);
-			return new Response(200,"User verified",null);
-		} else 
-		{
-			return new Response(400, "User not verified", null);
+			return new Response(200, "User verified", null);
+		} else {
+			return new Response(-2, "User not verified", null);
 		}
 	}
-	
-	/*
-	 * @Override public String validateUser(String token) { String id =
-	 * tokenGenerator.verifyToken(token);
-	 * 
-	 * Optional<User> optionalUser = userRepository.findByUserId(id); if
-	 * (optionalUser.isPresent()) { User user = optionalUser.get();
-	 * user.setVerified(true); userRepository.save(user); return "User verified"; }
-	 * else { return "User is not verified"; } }
-	 */
+
+	@SuppressWarnings("unused")
+	private String getLink(StringBuffer requestUrl) {
+		String url = requestUrl.substring(0, requestUrl.lastIndexOf("/"));
+		return url;
+	}
 
 }

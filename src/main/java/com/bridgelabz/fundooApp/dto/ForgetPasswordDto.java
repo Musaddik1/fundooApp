@@ -2,23 +2,34 @@ package com.bridgelabz.fundooApp.dto;
 
 public class ForgetPasswordDto {
 
-	private String emailId;
-
-	public ForgetPasswordDto() {
-
+	private String password;
+	
+	public ForgetPasswordDto()
+	{
+		
 	}
 
-	public ForgetPasswordDto(String emailId) {
-
-		this.emailId = emailId;
+	/**
+	 * @param password
+	 */
+	public ForgetPasswordDto(String password) {
+		super();
+		this.password = password;
 	}
 
-	public String getEmailId() {
-		return emailId;
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
 	}
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
+	
 
 }
