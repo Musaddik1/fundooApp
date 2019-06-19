@@ -1,6 +1,7 @@
 package com.bridgelabz.fundooApp.utility;
 
 
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
@@ -16,12 +17,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JWTTokenGenerator implements ITokenGenerator {
 
     String secret_token="fundoo9823139449";
-
 	@Override
 	public String generateToken(String id) {
 		String token = Jwts.builder()
 				  .setSubject("fundooNotes")
-				  .setExpiration(new Date(System.currentTimeMillis()+(100000*60)))
+				 // .setExpiration(new Date(System.currentTimeMillis()+200000))
 				  .setId(id)
 				  .signWith(SignatureAlgorithm.HS256, secret_token)
 				  .compact();

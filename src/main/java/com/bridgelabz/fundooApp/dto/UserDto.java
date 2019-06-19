@@ -1,10 +1,23 @@
  package com.bridgelabz.fundooApp.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class UserDto {
 	
+	@NotNull
+	@Size(min = 2,max = 30)
 	private String name;
+	@NotNull
+	//@Email(regexp ="^[_A-Za-z\\+]+(\\.[_A-Za-z0-9-]+)*@"
+	//	+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$" )
 	private String emailId;
+	
+	@Pattern(regexp = "^[6-9]?[0-9]{9}+$")
 	private String phoneNumber;
+	@NotNull
 	private String password;
 	
 	

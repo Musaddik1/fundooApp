@@ -13,8 +13,6 @@ public class MailUtil {
 	@Autowired
 	private  JavaMailSender javaMailSender;
 	
-	@Autowired
-	JWTTokenGenerator tokenGenerator;
 	public  void send(Email email)
 	{
 		SimpleMailMessage simple=new SimpleMailMessage();

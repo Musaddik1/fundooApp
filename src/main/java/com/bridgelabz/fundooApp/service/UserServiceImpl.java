@@ -17,9 +17,17 @@ import com.bridgelabz.fundooApp.utility.EncryptUtil;
 import com.bridgelabz.fundooApp.utility.ITokenGenerator;
 import com.bridgelabz.fundooApp.utility.MailUtil;
 
+
+/**
+ * @author admin123
+ *
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
+	/**
+	 * 
+	 */
 	@Autowired
 	private UserRepository userRepository;
 
@@ -42,6 +50,7 @@ public class UserServiceImpl implements UserService {
 		if (!ismail) {
 			User user = mapper.map(userDto, User.class);
 			user.setPassword(encoder.encode(userDto.getPassword()));
+			//user.setCreationTime(LocalTime.now());
 			try {
 				User savedUser = userRepository.save(user);
 				String token = tokenGenerator.generateToken(savedUser.getUserid());
@@ -71,10 +80,10 @@ public class UserServiceImpl implements UserService {
 			User user = optUser.get();
 			String userid = user.getUserid();
 			try {
-				String token = tokenGenerator.generateToken(userid);
+				String token =tokenGenerator.generateToken(userid);
 				System.out.println(token);
 				if (EncryptUtil.isPassword(loginDto, user)) {
-					return new Response(200, "successfully logged in", null);
+					return new Response(200, "successfully logged in", token);
 				} else {
 					throw new UserException("incorrect password");
 				}
