@@ -3,10 +3,10 @@ package com.bridgelabz.fundooApp.controller;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,7 @@ import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.service.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/userservice")
 public class UserController {
 
 	@Autowired
@@ -33,38 +33,41 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<Response> registerUser( @Valid @RequestBody UserDto userDto, HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
-		Response response = userService.registrationUser(userDto, requestUrl);
-		// response = new Response(HttpStatus.OK.value(), response.getStatusMessage(),
-		// null);
+		String message = userService.registrationUser(userDto, requestUrl);
+		Response response =  new Response(200, message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Response> loginUser(@RequestBody LoginDto loginDto)
+	public ResponseEntity<Response> loginUser(@RequestBody LoginDto loginDto, HttpServletResponse httpServletResponse)
 			throws IllegalArgumentException, UnsupportedEncodingException {
-
-		Response response = userService.loginUser(loginDto);
+		String token = userService.loginUser(loginDto);
+		httpServletResponse.setHeader("Authorization", token);
+		Response response = new Response(HttpStatus.OK.value(), "User logged in successfully", null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/forget")
 	public ResponseEntity<Response> forgotPassword(@RequestParam String emailId, HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
-		Response response = userService.forgetPassword(emailId, requestUrl);
+	//	Response response = userService.forgetPassword(emailId, requestUrl);
+		String message=userService.forgetPassword(emailId, requestUrl);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/resetpassword")
-	public ResponseEntity<Response> resetPassword(@RequestParam String token, @RequestParam String password) {
-
-		Response response = userService.restSetPassword(token, password);
+	public ResponseEntity<Response> resetPassword(@RequestParam String token, @RequestBody String password) {
+		String message = userService.restSetPassword(token, password);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 
 	}
 
 	@GetMapping("/verification/{token}")
 	public ResponseEntity<Response> mailValidation(@PathVariable String token) {
-		Response response = userService.validateUser(token);
+		String message = userService.validateUser(token);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 

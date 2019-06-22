@@ -20,40 +20,44 @@ import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.service.NoteService;
 
 @RestController
-@RequestMapping("/Note")
+@RequestMapping("/noteservice")
 public class NoteController {
 
 	@Autowired
 	private NoteService noteService;
 
-	@PostMapping("/create")
+	@PostMapping("/note")
 	public ResponseEntity<Response> createNote(@RequestBody NoteDto noteDto, @RequestParam String token)
 
 	{
-		Response response = noteService.createNote(noteDto, token);
+		String message = noteService.createNote(noteDto, token);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@PutMapping("/update")
+	@PutMapping("/note")
 	public ResponseEntity<Response> updateNote(@RequestBody NoteDto noteDto, @RequestParam String noteId,
 			@RequestParam String token) {
-		Response response = noteService.updateNote(noteDto, noteId, token);
+		String message = noteService.updateNote(noteDto, noteId, token);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/delete")
+	@DeleteMapping("/note")
 	public ResponseEntity<Response> deleteNote(@RequestParam String noteId, @RequestParam String token) {
-		Response response = noteService.deleteNote(noteId, token);
+		
+		String message = noteService.deleteNote(noteId, token);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@GetMapping("/getNote")
+	@GetMapping("/note")
 	public Note getNote(@RequestParam String noteId, @RequestParam String token) {
 		Note note = noteService.getNote(noteId, token);
 		return note;
 	}
 
-	@GetMapping("/getAll")
+	@GetMapping("/notes")
 	public List<Note> getAllNote(@RequestParam String token) {
 		List<Note> noteList = noteService.getAllNote(token);
 		return noteList;
@@ -69,5 +73,27 @@ public class NoteController {
 	public List<Note> getArchive(@RequestParam String token) {
 		List<Note> noteslist = noteService.getArchive(token);
 		return noteslist;
+	}
+	@GetMapping("/archiveandUnarchive")
+	public ResponseEntity<Response> archiveUnarchiveNote(@RequestParam String token,@RequestParam String noteId)
+	{
+		String message=noteService.archiveAndUnarchive(token, noteId);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+		
+	}
+	@GetMapping("/trashandUntrash")
+	public ResponseEntity<Response> trashAndUntrash(@RequestParam String token,@RequestParam String noteId)
+	{
+		String message=noteService.trashAndUntrash(token, noteId);
+		Response response=new Response(HttpStatus.OK.value(),message,null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	@GetMapping("/pinAndunpin")
+	public ResponseEntity<Response> pinAndUnpin(@RequestParam String token,@RequestParam String noteId)
+	{
+		String message=noteService.pinAndUnpin(token, noteId);
+		Response response=new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 }

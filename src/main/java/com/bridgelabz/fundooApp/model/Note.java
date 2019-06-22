@@ -1,8 +1,10 @@
 package com.bridgelabz.fundooApp.model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class Note {
 
@@ -10,29 +12,24 @@ public class Note {
 	private String noteId;
 	private String title;
 	private String description;
-	private LocalTime creationtTime;
-	private LocalTime updateTime;
+	private LocalDateTime creationtTime;
+	private LocalDateTime updateTime;
 	private String userId;
 	private boolean isTrash;
 	private boolean isArchive;
-
+	private boolean isPin;
+	
+	@DBRef
+	private List<Label> labels;
+	
 	public Note() {
 
 	}
 
-	/**
-	 * @param noteId
-	 * @param title
-	 * @param description
-	 * @param creationtTime
-	 * @param updateTime
-	 * @param userId
-	 * @param isTrash
-	 * @param isArchive
-	 */
-	public Note(String noteId, String title, String description, LocalTime creationtTime, LocalTime updateTime,
-			String userId, boolean isTrash, boolean isArchive) {
-		super();
+
+	public Note(String noteId, String title, String description, LocalDateTime creationtTime, LocalDateTime updateTime,
+			String userId, boolean isTrash, boolean isArchive, boolean isPin, List<Label> labels) {
+	
 		this.noteId = noteId;
 		this.title = title;
 		this.description = description;
@@ -41,7 +38,10 @@ public class Note {
 		this.userId = userId;
 		this.isTrash = isTrash;
 		this.isArchive = isArchive;
+		this.isPin = isPin;
+		this.labels = labels;
 	}
+
 
 	public String getNoteId() {
 		return noteId;
@@ -67,19 +67,19 @@ public class Note {
 		this.description = description;
 	}
 
-	public LocalTime getCreationtTime() {
+	public LocalDateTime getCreationtTime() {
 		return creationtTime;
 	}
 
-	public void setCreationtTime(LocalTime creationtTime) {
-		this.creationtTime = creationtTime;
+	public void setCreationtTime(LocalDateTime localDateTime) {
+		this.creationtTime = localDateTime;
 	}
 
-	public LocalTime getUpdateTime() {
+	public LocalDateTime getUpdateTime() {
 		return updateTime;
 	}
 
-	public void setUpdateTime(LocalTime updateTime) {
+	public void setUpdateTime(LocalDateTime updateTime) {
 		this.updateTime = updateTime;
 	}
 
@@ -107,10 +107,34 @@ public class Note {
 		this.isArchive = isArchive;
 	}
 
+	public boolean isPin() {
+		return isPin;
+	}
+
+	public void setPin(boolean isPin) {
+		this.isPin = isPin;
+	}
+
+
+	public List<Label> getLabels() {
+		return labels;
+	}
+
+
+	public void setLabels(List<Label> labels) {
+		this.labels = labels;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Note [noteId=" + noteId + ", title=" + title + ", description=" + description + ", creationtTime="
-				+ creationtTime + ", updateTime=" + updateTime + ", userId=" + userId + ", isTrash=" + isTrash + "]";
+				+ creationtTime + ", updateTime=" + updateTime + ", userId=" + userId + ", isTrash=" + isTrash
+				+ ", isArchive=" + isArchive + ", isPin=" + isPin + ", labels=" + labels + "]";
 	}
+	
+
+	
+
 
 }

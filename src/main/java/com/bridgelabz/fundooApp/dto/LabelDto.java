@@ -10,7 +10,6 @@ public class LabelDto {
 	 * @param labelName
 	 */
 	public LabelDto(String labelName) {
-		super();
 		this.labelName = labelName;
 	}
 

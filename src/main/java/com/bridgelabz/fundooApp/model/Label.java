@@ -1,5 +1,6 @@
 package com.bridgelabz.fundooApp.model;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.springframework.data.annotation.Id;
@@ -9,12 +10,14 @@ public class Label {
 	@Id
 	private String labelId;
 	private String labelName;
-	private LocalTime creationTime;
-	private LocalTime updateTime;
+	private LocalDateTime creationTime;
+	private LocalDateTime updateTime;
 	private String userId;
 	
 	public Label() {}
 
+
+	
 
 	/**
 	 * @param labelId
@@ -23,14 +26,17 @@ public class Label {
 	 * @param updateTime
 	 * @param userId
 	 */
-	public Label(String labelId, String labelName, LocalTime creationTime, LocalTime updateTime, String userId) {
-		super();
+	public Label(String labelId, String labelName, LocalDateTime creationTime, LocalDateTime updateTime,
+			String userId) {
+		
 		this.labelId = labelId;
 		this.labelName = labelName;
 		this.creationTime = creationTime;
 		this.updateTime = updateTime;
 		this.userId = userId;
 	}
+
+
 
 
 	public String getLabelId() {
@@ -49,26 +55,33 @@ public class Label {
 		this.labelName = labelName;
 	}
 
-	
 
-	public LocalTime getCreationTime() {
+	public LocalDateTime getCreationTime() {
 		return creationTime;
 	}
 
 
-	public void setCreationTime(LocalTime creationTime) {
+
+
+	public void setCreationTime(LocalDateTime creationTime) {
 		this.creationTime = creationTime;
 	}
 
 
-	public LocalTime getUpdateTime() {
+
+
+	public LocalDateTime getUpdateTime() {
 		return updateTime;
 	}
 
 
-	public void setUpdateTime(LocalTime updateTime) {
+
+
+	public void setUpdateTime(LocalDateTime updateTime) {
 		this.updateTime = updateTime;
 	}
+
+
 
 
 	public String getUserId() {

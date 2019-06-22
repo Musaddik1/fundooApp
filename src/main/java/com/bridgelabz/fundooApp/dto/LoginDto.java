@@ -13,7 +13,6 @@ public class LoginDto {
 
 
 	public LoginDto(String emailId, String password) {
-		super();
 		this.emailId = emailId;
 		this.password = password;
 	}

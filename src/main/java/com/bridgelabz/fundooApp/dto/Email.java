@@ -1,4 +1,4 @@
-package com.bridgelabz.fundooApp.model;
+package com.bridgelabz.fundooApp.dto;
 
 public class Email {
 	

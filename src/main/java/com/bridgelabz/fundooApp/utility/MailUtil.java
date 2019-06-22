@@ -5,7 +5,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import com.bridgelabz.fundooApp.model.Email;
+import com.bridgelabz.fundooApp.dto.Email;
 
 @Component
 public class MailUtil {

@@ -1,17 +1,11 @@
 package com.bridgelabz.fundooApp.model;
 
-import java.time.LocalTime;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -29,14 +23,14 @@ public class User {
 	private String phoneNumber;
 	private String address;
 	private boolean isVerified;
-	private LocalTime creationTime;
-    @DBRef
-    private List<Note> noteList;
+	private LocalDateTime creationTime;
+	private LocalDateTime updateTime;
 	
 	public User()
 	{
 		
 	}
+	
 	
 	/**
 	 * @param userId
@@ -47,11 +41,12 @@ public class User {
 	 * @param address
 	 * @param isVerified
 	 * @param creationTime
-	 * @param noteList
+	 * @param updateTime
 	 */
-	public User(String userId, String emailId, String name, String password, String phoneNumber, String address,
-			boolean isVerified, LocalTime creationTime, List<Note> noteList) {
-		super();
+	public User(String userId, @Email(message = "Email should not be null") String emailId, String name,
+			String password, String phoneNumber, String address, boolean isVerified, LocalDateTime creationTime,
+			LocalDateTime updateTime) {
+		
 		this.userId = userId;
 		this.emailId = emailId;
 		this.name = name;
@@ -60,8 +55,9 @@ public class User {
 		this.address = address;
 		this.isVerified = isVerified;
 		this.creationTime = creationTime;
-		this.noteList = noteList;
+		this.updateTime = updateTime;
 	}
+
 
 	/**
 	 * @return the address
@@ -146,32 +142,47 @@ public class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
-	
 
-	public LocalTime getCreationTime() {
+
+	public String getUserId() {
+		return userId;
+	}
+
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+
+	public LocalDateTime getCreationTime() {
 		return creationTime;
 	}
 
-	public void setCreationTime(LocalTime creationTime) {
+
+	public void setCreationTime(LocalDateTime creationTime) {
 		this.creationTime = creationTime;
 	}
-	
 
-	public List<Note> getNoteList() {
-		return noteList;
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
 	}
 
-	public void setNoteList(List<Note> noteList) {
-		this.noteList = noteList;
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
 	}
+
 
 	@Override
 	public String toString() {
-		return "User [userid=" + userId + ", emailId=" + emailId + ", name=" + name + ", password=" + password
-				+ ", phoneNumber=" + phoneNumber + ", address=" + address + ", isVerified=" + isVerified + ", token="
-				+ "]";
+		return "User [userId=" + userId + ", emailId=" + emailId + ", name=" + name + ", password=" + password
+				+ ", phoneNumber=" + phoneNumber + ", address=" + address + ", isVerified=" + isVerified
+				+ ", creationTime=" + creationTime + ", updateTime=" + updateTime + "]";
 	}
+	
+	
+	
 
 
 }

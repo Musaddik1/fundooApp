@@ -1,19 +1,22 @@
 package com.bridgelabz.fundooApp.service;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundooApp.dto.LabelDto;
+import com.bridgelabz.fundooApp.exception.LabelException;
+import com.bridgelabz.fundooApp.exception.NoteException;
 import com.bridgelabz.fundooApp.exception.UserException;
 import com.bridgelabz.fundooApp.model.Label;
+import com.bridgelabz.fundooApp.model.Note;
 import com.bridgelabz.fundooApp.model.User;
 import com.bridgelabz.fundooApp.repository.LabelRespository;
+import com.bridgelabz.fundooApp.repository.NoteRepository;
 import com.bridgelabz.fundooApp.repository.UserRepository;
-import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.utility.JWTTokenGenerator;
 
 @Service
@@ -29,26 +32,29 @@ public class LabelServiceImpl implements LabelService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired
+	private NoteRepository noteRepository;
 
 	@Override
-	public Response createLabel(String token, LabelDto labelDto) {
+	public String createLabel(String token, LabelDto labelDto) {
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optUser = userRepository.findById(userId);
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			Label label = modelMapper.map(labelDto, Label.class);
-			label.setCreationTime(LocalTime.now());
+			label.setCreationTime(LocalDateTime.now());
+			label.setUpdateTime(LocalDateTime.now());
 			label.setUserId(user.getUserid());
 			labelRespository.save(label);
-			return new Response(200, "success", null);
+			return "label created";
 		} else {
-			throw new UserException("unsuccess");
+			throw new UserException("User not present");
 		}
 
 	}
 
 	@Override
-	public Response updateLabel(String token, String labeId, LabelDto labelDto) {
+	public String updateLabel(String token, String labeId, LabelDto labelDto) {
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optUser = userRepository.findById(userId);
 		if (optUser.isPresent()) {
@@ -57,20 +63,22 @@ public class LabelServiceImpl implements LabelService {
 			if (optLabel.isPresent()) {
 				Label label = optLabel.get();
 				label.setLabelName(labelDto.getLabelName());
-				label.setUpdateTime(LocalTime.now());
+				label.setUpdateTime(LocalDateTime.now());
 				labelRespository.save(label);
-				return new Response(200, "success", null);
+				// return new Response(200, "success", null);
+				return "label updated";
 
 			} else {
-				return new Response(202, "label id doesnt match", null);
+				// return new Response(202, "label id doesnt match", null);
+				throw new LabelException("label id doesnt match");
 			}
 		} else {
-			return new Response(202, "unseccess", null);
+			throw new UserException("User doesnt match");
 		}
 	}
 
 	@Override
-	public Response deleteLabel(String token, String labelId) {
+	public String deleteLabel(String token, String labelId) {
 
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optUser = userRepository.findById(userId);
@@ -82,14 +90,96 @@ public class LabelServiceImpl implements LabelService {
 				System.out.println("LabelServiceImpl.deleteLabel()");
 				Label label = optLabel.get();
 				labelRespository.delete(label);
-
-				return new Response(200, "label deleted", null);
+				return "label deleted";
 
 			} else {
-				return new Response(202, "label doesnt exist", null);
+
+				throw new LabelException("label doesnt exist");
 			}
 		} else {
-			return new Response(202, "user not found", null);
+
+			throw new UserException("User not found");
+		}
+	}
+
+	@Override
+	public List<Label> getAllLabel(String token) {
+		String userId = tokenGenerator.verifyToken(token);
+		List<Label> labels = labelRespository.findByUserId(userId);
+
+		return labels;
+	}
+
+	@Override
+	public String addLabelToNote(String token, String labelId, String noteId) {
+
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<Label> optLabel = labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if (optLabel.isPresent()) {
+			Optional<Note> optNote = noteRepository.findById(noteId);
+			if (optNote.isPresent()) {
+				Note note = optNote.get();
+				List<Label> labelList = note.getLabels();
+				Label label = optLabel.get();
+				labelList.add(label);
+				note.setLabels(labelList);
+				note.setUpdateTime(LocalDateTime.now());
+				noteRepository.save(note);
+				return "label added to note";
+
+			} else {
+				throw new NoteException("note not present");
+			}
+		} else {
+			throw new UserException("User or label not present");
+		}
+
+	}
+
+	@Override
+	public String removeLabelFromNote(String token, String labelId, String noteId) {
+
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<Label> optLabel = labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if (optLabel.isPresent()) {
+			Optional<Note> optNote = noteRepository.findById(noteId);
+			if (optNote.isPresent()) {
+				Note note = optNote.get();
+				Label label = optLabel.get();
+				List<Label> labelList = note.getLabels();
+				for (Label label1 : labelList) {
+					if (label1.getLabelId().equals(label.getLabelId())) {
+						labelList.remove(label1);
+
+					}
+				}
+				note.setUpdateTime(LocalDateTime.now());
+				note.setLabels(labelList);
+				noteRepository.save(note);
+
+				return "label removed from note";
+			} else {
+				throw new NoteException("note note present");
+			}
+		} else {
+			throw new UserException("User or label not found");
+		}
+	}
+
+	@Override
+	public Label getLabel(String token, String labelId) {
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optUser = userRepository.findById(userId);
+		if (optUser.isPresent()) {
+			Optional<Label> optLabel = labelRespository.findById(labelId);
+			if (optLabel.isPresent()) {
+				Label label = optLabel.get();
+				return label;
+			} else {
+				throw new LabelException("label not present");
+			}
+		} else {
+			throw new UserException("User not present");
 		}
 	}
 
