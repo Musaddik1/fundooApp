@@ -11,19 +11,16 @@ import com.bridgelabz.fundooApp.dto.Email;
 public class MailUtil {
 
 	@Autowired
-	private  JavaMailSender javaMailSender;
-	
-	public  void send(Email email)
-	{
-		SimpleMailMessage simple=new SimpleMailMessage();
+	private JavaMailSender javaMailSender;
+
+	public void send(Email email) {
+		SimpleMailMessage simple = new SimpleMailMessage();
 		simple.setTo(email.getTo());
 		simple.setSubject(email.getSubject());
 		simple.setText(email.getBody());
-		
+
 		javaMailSender.send(simple);
 		System.out.println("Email send successfully....");
 	}
-	
-	
 
 }

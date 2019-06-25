@@ -21,17 +21,17 @@ public class UserExceptionHandler {
 		Response response = new Response(HttpStatus.BAD_REQUEST.value(), runtimeException.getMessage(), null);
 		return new ResponseEntity<Response>(response, HttpStatus.BAD_REQUEST);
 	}
+
 	@ExceptionHandler(NoteException.class)
-	public ResponseEntity<Response> handleNoteException(RuntimeException runtimeException)
-	{
-		Response response=new Response(HttpStatus.BAD_REQUEST.value(),runtimeException.getMessage(),null);
-		return new ResponseEntity<Response>(response,HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Response> handleNoteException(RuntimeException runtimeException) {
+		Response response = new Response(HttpStatus.BAD_REQUEST.value(), runtimeException.getMessage(), null);
+		return new ResponseEntity<Response>(response, HttpStatus.BAD_REQUEST);
 	}
+
 	@ExceptionHandler(LabelException.class)
-	public ResponseEntity<Response> handleLabelException(RuntimeException runtimeException)
-	{
-		Response response=new Response(HttpStatus.BAD_REQUEST.value(), runtimeException.getMessage(), null);
-		return new ResponseEntity<Response>(response,HttpStatus.BAD_REQUEST);
+	public ResponseEntity<Response> handleLabelException(RuntimeException runtimeException) {
+		Response response = new Response(HttpStatus.BAD_REQUEST.value(), runtimeException.getMessage(), null);
+		return new ResponseEntity<Response>(response, HttpStatus.BAD_REQUEST);
 	}
 
 }

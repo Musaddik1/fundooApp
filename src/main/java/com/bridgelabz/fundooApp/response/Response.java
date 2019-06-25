@@ -6,10 +6,11 @@ public class Response {
 	private String statusMessage;
 	private Object data;
 
-	public Response() {}
+	public Response() {
+	}
 
 	public Response(int statuscode, String statusMessage, Object data) {
-		
+
 		this.statuscode = statuscode;
 		this.statusMessage = statusMessage;
 		this.data = data;
@@ -34,10 +35,9 @@ public class Response {
 	public Object getData() {
 		return data;
 	}
-	
+
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	
+
 }

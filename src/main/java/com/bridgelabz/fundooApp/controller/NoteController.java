@@ -31,7 +31,7 @@ public class NoteController {
 
 	{
 		String message = noteService.createNote(noteDto, token);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
@@ -39,15 +39,15 @@ public class NoteController {
 	public ResponseEntity<Response> updateNote(@RequestBody NoteDto noteDto, @RequestParam String noteId,
 			@RequestParam String token) {
 		String message = noteService.updateNote(noteDto, noteId, token);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/note")
 	public ResponseEntity<Response> deleteNote(@RequestParam String noteId, @RequestParam String token) {
-		
+
 		String message = noteService.deleteNote(noteId, token);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
@@ -74,44 +74,44 @@ public class NoteController {
 		List<Note> noteslist = noteService.getArchive(token);
 		return noteslist;
 	}
+
 	@GetMapping("/archiveandUnarchive")
-	public ResponseEntity<Response> archiveUnarchiveNote(@RequestParam String token,@RequestParam String noteId)
-	{
-		String message=noteService.archiveAndUnarchive(token, noteId);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
-		
+	public ResponseEntity<Response> archiveUnarchiveNote(@RequestParam String token, @RequestParam String noteId) {
+		String message = noteService.archiveAndUnarchive(token, noteId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
+
 	}
+
 	@GetMapping("/trashandUntrash")
-	public ResponseEntity<Response> trashAndUntrash(@RequestParam String token,@RequestParam String noteId)
-	{
-		String message=noteService.trashAndUntrash(token, noteId);
-		Response response=new Response(HttpStatus.OK.value(),message,null);
+	public ResponseEntity<Response> trashAndUntrash(@RequestParam String token, @RequestParam String noteId) {
+		String message = noteService.trashAndUntrash(token, noteId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+
 	@GetMapping("/pinAndunpin")
-	public ResponseEntity<Response> pinAndUnpin(@RequestParam String token,@RequestParam String noteId)
-	{
-		String message=noteService.pinAndUnpin(token, noteId);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	public ResponseEntity<Response> pinAndUnpin(@RequestParam String token, @RequestParam String noteId) {
+		String message = noteService.pinAndUnpin(token, noteId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+
 	@GetMapping("/sortbyname")
-	public List<Note> sortByName(@RequestParam String token)
-	{
-		List<Note> noteList=noteService.sortByName(token);
+	public List<Note> sortByName(@RequestParam String token) {
+		List<Note> noteList = noteService.sortByName(token);
 		return noteList;
 	}
+
 	@GetMapping("/sortbydate")
-	public List<Note> sortByDate(@RequestParam String token)
-	{
-		List<Note> noteList=noteService.sortByDate(token);
+	public List<Note> sortByDate(@RequestParam String token) {
+		List<Note> noteList = noteService.sortByDate(token);
 		return noteList;
 	}
+
 	@GetMapping("/sortbyid")
-	public List<Note> sortById(@RequestParam String token)
-	{
-		List<Note> noteList=noteService.sortById(token);
+	public List<Note> sortById(@RequestParam String token) {
+		List<Note> noteList = noteService.sortById(token);
 		return noteList;
 	}
 }

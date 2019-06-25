@@ -20,61 +20,63 @@ import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.service.LabelService;
 
 @RestController
-@RequestMapping("/label")
+@RequestMapping("/labelservice")
 public class LabelController {
 
 	@Autowired
 	private LabelService labelService;
 
-	@PostMapping("/create")
+	@PostMapping("/label")
 	public ResponseEntity<Response> createLabel(@RequestParam String token, @RequestBody LabelDto labelDto) {
 		String message = labelService.createLabel(token, labelDto);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
-	@PutMapping("/update")
+	@PutMapping("/label")
 	public ResponseEntity<Response> updateLabel(@RequestParam String token, @RequestParam String labelId,
 			@RequestBody LabelDto labelDto) {
-		String message=labelService.updateLabel(token, labelId, labelDto);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+		String message = labelService.updateLabel(token, labelId, labelDto);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 
 	}
 
-	@DeleteMapping("/delete")
+	@DeleteMapping("/label")
 	public ResponseEntity<Response> deleteLable(@RequestParam String token, @RequestParam String labelId) {
 
-		String message=labelService.deleteLabel(token, labelId);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+		String message = labelService.deleteLabel(token, labelId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	
-	@GetMapping("/getall")
-	public List<Label> getAllLabel(@RequestParam String token)
-	{
-		List<Label> labelList=labelService.getAllLabel(token);
+
+	@GetMapping("/labels")
+	public List<Label> getAllLabel(@RequestParam String token) {
+		List<Label> labelList = labelService.getAllLabel(token);
 		return labelList;
 	}
+
 	@GetMapping("/addlabel")
-	public ResponseEntity<Response> addLabeltoNote(@RequestParam String token ,@RequestParam String labelId,@RequestParam String noteId)
-	{
-		String message=labelService.addLabelToNote(token, labelId, noteId);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	public ResponseEntity<Response> addLabeltoNote(@RequestParam String token, @RequestParam String labelId,
+			@RequestParam String noteId) {
+		String message = labelService.addLabelToNote(token, labelId, noteId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
+
 	@PostMapping("/removelabel")
-	public ResponseEntity<Response> removeLabelfromNote(@RequestParam String token,@RequestParam String labelId,@RequestParam String noteId)
-	{
-		String message=labelService.removeLabelFromNote(token, labelId, noteId);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
-		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	public ResponseEntity<Response> removeLabelfromNote(@RequestParam String token, @RequestParam String labelId,
+			@RequestParam String noteId) {
+		String message = labelService.removeLabelFromNote(token, labelId, noteId);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
-	@GetMapping("/getlabel")
+
+	@GetMapping("/label")
 	public Label getLabel(@RequestParam String token, @RequestParam String labelId)
 
 	{
-		Label label=labelService.getLabel(token, labelId);
+		Label label = labelService.getLabel(token, labelId);
 		return label;
 	}
 }

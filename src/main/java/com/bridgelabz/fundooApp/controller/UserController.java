@@ -31,10 +31,10 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/register")
-	public ResponseEntity<Response> registerUser( @Valid @RequestBody UserDto userDto, HttpServletRequest request) {
+	public ResponseEntity<Response> registerUser(@Valid @RequestBody UserDto userDto, HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
 		String message = userService.registrationUser(userDto, requestUrl);
-		Response response =  new Response(200, message, null);
+		Response response = new Response(200, message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
@@ -50,16 +50,16 @@ public class UserController {
 	@GetMapping("/forget")
 	public ResponseEntity<Response> forgotPassword(@RequestParam String emailId, HttpServletRequest request) {
 		StringBuffer requestUrl = request.getRequestURL();
-	//	Response response = userService.forgetPassword(emailId, requestUrl);
-		String message=userService.forgetPassword(emailId, requestUrl);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		// Response response = userService.forgetPassword(emailId, requestUrl);
+		String message = userService.forgetPassword(emailId, requestUrl);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 
 	@PutMapping("/resetpassword")
 	public ResponseEntity<Response> resetPassword(@RequestParam String token, @RequestBody String password) {
 		String message = userService.restSetPassword(token, password);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 
 	}
@@ -67,7 +67,7 @@ public class UserController {
 	@GetMapping("/verification/{token}")
 	public ResponseEntity<Response> mailValidation(@PathVariable String token) {
 		String message = userService.validateUser(token);
-		Response response=new Response(HttpStatus.OK.value(), message, null);
+		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 

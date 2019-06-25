@@ -300,31 +300,25 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<Note> sortById(String token) {
-		String userId=tokenGenerator.verifyToken(token);
-		Optional<User> optionalNote=userRepository.findById(userId);
-		if(optionalNote.isPresent())
-		{
-			List<Note> notelList=noteRepository.findAll();
-			for(int i=0;i<notelList.size();i++)
-			{
-				for(int j=0;j<notelList.size();j++)
-				{
-					if(notelList.get(i).getUserId().compareTo(notelList.get(j).getUserId())<0)
-					{
-						Note note =notelList.get(i);
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optionalNote = userRepository.findById(userId);
+		if (optionalNote.isPresent()) {
+			List<Note> notelList = noteRepository.findAll();
+			for (int i = 0; i < notelList.size(); i++) {
+				for (int j = 0; j < notelList.size(); j++) {
+					if (notelList.get(i).getUserId().compareTo(notelList.get(j).getUserId()) < 0) {
+						Note note = notelList.get(i);
 						notelList.set(i, notelList.get(j));
 						notelList.set(j, note);
 					}
 				}
 			}
 			return notelList;
-			
-		}
-		else
-		{
+
+		} else {
 			throw new UserException("User not found");
 		}
-		
+
 	}
 
 }

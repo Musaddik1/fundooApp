@@ -18,18 +18,17 @@ public class Note {
 	private boolean isTrash;
 	private boolean isArchive;
 	private boolean isPin;
-	
+
 	@DBRef
 	private List<Label> labels;
-	
+
 	public Note() {
 
 	}
 
-
 	public Note(String noteId, String title, String description, LocalDateTime creationtTime, LocalDateTime updateTime,
 			String userId, boolean isTrash, boolean isArchive, boolean isPin, List<Label> labels) {
-	
+
 		this.noteId = noteId;
 		this.title = title;
 		this.description = description;
@@ -41,7 +40,6 @@ public class Note {
 		this.isPin = isPin;
 		this.labels = labels;
 	}
-
 
 	public String getNoteId() {
 		return noteId;
@@ -115,16 +113,13 @@ public class Note {
 		this.isPin = isPin;
 	}
 
-
 	public List<Label> getLabels() {
 		return labels;
 	}
 
-
 	public void setLabels(List<Label> labels) {
 		this.labels = labels;
 	}
-
 
 	@Override
 	public String toString() {
@@ -132,9 +127,5 @@ public class Note {
 				+ creationtTime + ", updateTime=" + updateTime + ", userId=" + userId + ", isTrash=" + isTrash
 				+ ", isArchive=" + isArchive + ", isPin=" + isPin + ", labels=" + labels + "]";
 	}
-	
-
-	
-
 
 }

@@ -1,13 +1,12 @@
 package com.bridgelabz.fundooApp.exception;
 
-public class NoteException extends RuntimeException{
+public class NoteException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private String message;
-	
-	public NoteException()
-	{
-		
+
+	public NoteException() {
+
 	}
 
 	/**
@@ -25,6 +24,5 @@ public class NoteException extends RuntimeException{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
+
 }
