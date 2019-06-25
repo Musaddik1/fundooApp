@@ -10,10 +10,8 @@ public class UserDto {
 	@NotNull
 	@Size(min = 2,max = 30)
 	private String name;
-	@NotNull
-	//@Email(regexp ="^[_A-Za-z\\+]+(\\.[_A-Za-z0-9-]+)*@"
-	//	+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$" )
-	private String emailId;
+
+	private String email;
 	
 	@Pattern(regexp = "^[6-9]?[0-9]{9}+$")
 	private String phoneNumber;
@@ -27,13 +25,26 @@ public class UserDto {
 	}
 
 
-	public UserDto(String name, String emailId, String phoneNumber, String password) {
+	
+
+
+	/**
+	 * @param name
+	 * @param email
+	 * @param phoneNumber
+	 * @param password
+	 */
+	public UserDto(@NotNull @Size(min = 2, max = 30) String name, String email,
+			@Pattern(regexp = "^[6-9]?[0-9]{9}+$") String phoneNumber, @NotNull String password) {
 		super();
 		this.name = name;
-		this.emailId = emailId;
+		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.password = password;
 	}
+
+
+
 
 
 	public String getName() {
@@ -46,14 +57,22 @@ public class UserDto {
 	}
 
 
-	public String getEmailId() {
-		return emailId;
+	
+
+	public String getEmail() {
+		return email;
 	}
 
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+
+
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
+
+
+
 
 
 	public String getPhoneNumber() {
@@ -73,6 +92,16 @@ public class UserDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+
+
+
+
+	@Override
+	public String toString() {
+		return "UserDto [name=" + name + ", email=" + email + ", phoneNumber=" + phoneNumber + ", password=" + password
+				+ "]";
 	}
 
 	

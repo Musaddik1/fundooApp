@@ -2,7 +2,7 @@ package com.bridgelabz.fundooApp.dto;
 
 public class LoginDto {
 	
-	private String emailId;
+	private String email;
 	private String password;
 	
 	
@@ -11,21 +11,31 @@ public class LoginDto {
 		
 	}
 
-
-	public LoginDto(String emailId, String password) {
-		this.emailId = emailId;
+	/**
+	 * @param email
+	 * @param password
+	 */
+	public LoginDto(String email, String password) {
+		
+		this.email = email;
 		this.password = password;
 	}
 
 
-	public String getEmailId() {
-		return emailId;
+
+
+	public String getEmail() {
+		return email;
 	}
 
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
+
+
 
 
 	public String getPassword() {
@@ -37,6 +47,14 @@ public class LoginDto {
 		this.password = password;
 	}
 
-	
+
+
+
+	@Override
+	public String toString() {
+		return "LoginDto [email=" + email + ", password=" + password + "]";
+	}
+
+
 
 }
