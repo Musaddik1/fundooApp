@@ -163,7 +163,7 @@ public class LabelServiceImpl implements LabelService {
 							note.setLabels(labelList);
 							noteRepository.save(note);
 
-							return "label removed from note";
+							return "label removed from note successfully";
 
 						}
 					}
