@@ -23,5 +23,6 @@ public interface NoteService {
 	List<Note> sortByName(String token);
 	List<Note> sortByDate(String token);
 	List<Note> sortByType(String token);
+	List<Note> sortById(String token);
 	
 }

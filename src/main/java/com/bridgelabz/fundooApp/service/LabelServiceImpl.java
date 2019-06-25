@@ -19,8 +19,6 @@ import com.bridgelabz.fundooApp.repository.NoteRepository;
 import com.bridgelabz.fundooApp.repository.UserRepository;
 import com.bridgelabz.fundooApp.utility.JWTTokenGenerator;
 
-import ch.qos.logback.classic.Logger;
-
 @Service
 public class LabelServiceImpl implements LabelService {
 
@@ -123,15 +121,12 @@ public class LabelServiceImpl implements LabelService {
 				Note note = optNote.get();
 				List<Label> labelList = new ArrayList<Label>();
 				Label label = optLabel.get();
-				if(note.getLabels()!=null)
-				{
-				labelList=note.getLabels();
-				
-				labelList.add(label);
-				
-				}
-				else
-				{
+				if (note.getLabels() != null) {
+					labelList = note.getLabels();
+
+					labelList.add(label);
+
+				} else {
 					labelList.add(label);
 				}
 				note.setLabels(labelList);
@@ -158,26 +153,23 @@ public class LabelServiceImpl implements LabelService {
 			if (optNote.isPresent()) {
 				Note note = optNote.get();
 				Label label = optLabel.get();
-				System.out.println(label);
-				List<Label> labelList =new ArrayList<Label>();
-				if(note.getLabels()!=null)
-				{
-				labelList=note.getLabels();
-				System.out.println(labelList);
-				for (Label label1 : labelList) {
-					if (label1.getLabelId().equals(label.getLabelId())) {
-						labelList.remove(label1);
-						note.setUpdateTime(LocalDateTime.now());
-						note.setLabels(labelList);
-						noteRepository.save(note);
+				List<Label> labelList = new ArrayList<Label>();
+				if (note.getLabels() != null) {
+					labelList = note.getLabels();
+					for (Label label1 : labelList) {
+						if (label1.getLabelId().equals(label.getLabelId())) {
+							labelList.remove(label1);
+							note.setUpdateTime(LocalDateTime.now());
+							note.setLabels(labelList);
+							noteRepository.save(note);
 
-						return "label removed from note";
+							return "label removed from note";
 
+						}
 					}
 				}
-				}
-				return "";
-				
+				return "label remove from note";
+
 			} else {
 				throw new NoteException("note note present");
 			}

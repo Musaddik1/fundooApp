@@ -1,6 +1,5 @@
 package com.bridgelabz.fundooApp.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +106,12 @@ public class NoteController {
 	public List<Note> sortByDate(@RequestParam String token)
 	{
 		List<Note> noteList=noteService.sortByDate(token);
+		return noteList;
+	}
+	@GetMapping("/sortbyid")
+	public List<Note> sortById(@RequestParam String token)
+	{
+		List<Note> noteList=noteService.sortById(token);
 		return noteList;
 	}
 }

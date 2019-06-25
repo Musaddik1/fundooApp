@@ -1,8 +1,6 @@
 package com.bridgelabz.fundooApp.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -194,16 +192,7 @@ public class NoteServiceImpl implements NoteService {
 		} else {
 			throw new UserException("User not present");
 		}
-		/*
-		 * String userId=tokenGenerator.verifyToken(token); Optional<User>
-		 * optUser=userRepository.findById(userId); if(optUser.isPresent()) {
-		 * Optional<Note> optNote=noteRepository.findById(noteId);
-		 * if(optNote.isPresent()) { Note note=optNote.get(); note.setArchive(true);
-		 * noteRepository.save(note); return "note in archive";
-		 * 
-		 * } else { throw new NoteException("note doesnt exist"); } } else { throw new
-		 * UserException("User doesnt exist"); }
-		 */
+
 	}
 
 	@Override
@@ -263,7 +252,6 @@ public class NoteServiceImpl implements NoteService {
 	public List<Note> sortByName(String token) {
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optUser = userRepository.findById(userId);
-		List<Note> updateList = new ArrayList<Note>();
 		if (optUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
 			for (int i = 0; i < noteList.size(); i++) {
@@ -308,6 +296,35 @@ public class NoteServiceImpl implements NoteService {
 	public List<Note> sortByType(String token) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Note> sortById(String token) {
+		String userId=tokenGenerator.verifyToken(token);
+		Optional<User> optionalNote=userRepository.findById(userId);
+		if(optionalNote.isPresent())
+		{
+			List<Note> notelList=noteRepository.findAll();
+			for(int i=0;i<notelList.size();i++)
+			{
+				for(int j=0;j<notelList.size();j++)
+				{
+					if(notelList.get(i).getUserId().compareTo(notelList.get(j).getUserId())<0)
+					{
+						Note note =notelList.get(i);
+						notelList.set(i, notelList.get(j));
+						notelList.set(j, note);
+					}
+				}
+			}
+			return notelList;
+			
+		}
+		else
+		{
+			throw new UserException("User not found");
+		}
+		
 	}
 
 }
