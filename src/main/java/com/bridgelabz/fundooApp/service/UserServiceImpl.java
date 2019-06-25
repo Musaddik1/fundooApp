@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.bridgelabz.fundooApp.dto.Email;
+import com.bridgelabz.fundooApp.dto.*;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
 import com.bridgelabz.fundooApp.exception.UserException;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String registrationUser(UserDto userDto, StringBuffer requestUrl) {
 
-		boolean ismail = userRepository.findByEmailId(userDto.getEmailId()).isPresent();
+		boolean ismail = userRepository.findByEmail(userDto.getEmail()).isPresent();
 		if (!ismail) {
 			User user = mapper.map(userDto, User.class);
 			user.setPassword(encoder.encode(userDto.getPassword()));
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String loginUser(LoginDto loginDto) {
 
-		Optional<User> optUser = userRepository.findByEmailId(loginDto.getEmailId());
+		Optional<User> optUser = userRepository.findByEmail(loginDto.getEmail());
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			try {
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String forgetPassword(String emailId, StringBuffer requestUrl) {
-		Optional<User> optUser = userRepository.findByEmailId(emailId);
+		Optional<User> optUser = userRepository.findByEmail(emailId);
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			String id = user.getUserid();

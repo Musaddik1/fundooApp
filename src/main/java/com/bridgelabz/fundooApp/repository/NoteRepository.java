@@ -3,7 +3,6 @@ package com.bridgelabz.fundooApp.repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.bridgelabz.fundooApp.model.Note;
-import com.bridgelabz.fundooApp.model.User;
 
 import java.lang.String;
 import java.util.List;
@@ -17,5 +16,6 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 List<Note> findByUserIdAndIsArchive(String userId, boolean isArchive);
 Optional<Note> findByNoteIdAndUserId(String noteId,String userId);
  
+
  
 }

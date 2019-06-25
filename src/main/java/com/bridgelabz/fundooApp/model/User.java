@@ -13,9 +13,9 @@ public class User {
 	
 	@Id
 	private String userId;
-	@Indexed(unique=true)
+	//@Indexed(unique=true)
 	@Email(message = "Email should not be null")
-	private String emailId;
+	private String email;
 
 	private String name;
 	
@@ -32,9 +32,12 @@ public class User {
 	}
 	
 	
+	
+
+
 	/**
 	 * @param userId
-	 * @param emailId
+	 * @param email
 	 * @param name
 	 * @param password
 	 * @param phoneNumber
@@ -43,12 +46,12 @@ public class User {
 	 * @param creationTime
 	 * @param updateTime
 	 */
-	public User(String userId, @Email(message = "Email should not be null") String emailId, String name,
-			String password, String phoneNumber, String address, boolean isVerified, LocalDateTime creationTime,
+	public User(String userId, @Email(message = "Email should not be null") String email, String name, String password,
+			String phoneNumber, String address, boolean isVerified, LocalDateTime creationTime,
 			LocalDateTime updateTime) {
 		
 		this.userId = userId;
-		this.emailId = emailId;
+		this.email = email;
 		this.name = name;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
@@ -57,6 +60,9 @@ public class User {
 		this.creationTime = creationTime;
 		this.updateTime = updateTime;
 	}
+
+
+
 
 
 	/**
@@ -104,13 +110,15 @@ public class User {
 
 
 
-	public String getEmailId() {
-		return emailId;
+	
+
+	public String getEmail() {
+		return email;
 	}
 
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 
@@ -176,10 +184,13 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", emailId=" + emailId + ", name=" + name + ", password=" + password
+		return "User [userId=" + userId + ", email=" + email + ", name=" + name + ", password=" + password
 				+ ", phoneNumber=" + phoneNumber + ", address=" + address + ", isVerified=" + isVerified
 				+ ", creationTime=" + creationTime + ", updateTime=" + updateTime + "]";
 	}
+
+
+	
 	
 	
 	

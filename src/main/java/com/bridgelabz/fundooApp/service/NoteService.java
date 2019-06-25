@@ -20,4 +20,7 @@ public interface NoteService {
 	String trashAndUntrash(String token,String noteId);
 	String pinAndUnpin(String token,String noteId);
 	
+	List<Note> sortByName(String token);
+	List<Note> sortByDate(String token);
+	
 }

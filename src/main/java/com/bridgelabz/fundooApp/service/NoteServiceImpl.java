@@ -1,6 +1,8 @@
 package com.bridgelabz.fundooApp.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -254,6 +256,51 @@ public class NoteServiceImpl implements NoteService {
 
 		} else {
 			throw new UserException("User doesnt present");
+		}
+	}
+
+	@Override
+	public List<Note> sortByName(String token) {
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optUser = userRepository.findById(userId);
+		List<Note> updateList = new ArrayList<Note>();
+		if (optUser.isPresent()) {
+			List<Note> noteList = noteRepository.findAll();
+			for (int i = 0; i < noteList.size(); i++) {
+				for (int j = 0; j < noteList.size() - 1; j++) {
+					if (noteList.get(i).getTitle().compareTo(noteList.get(j).getTitle()) > 0) {
+						Note note = noteList.get(i);
+						noteList.set(i, noteList.get(j));
+						noteList.set(j, note);
+					}
+				}
+			}
+			return noteList;
+		} else {
+			throw new UserException("User not present");
+		}
+
+	}
+
+	@Override
+	public List<Note> sortByDate(String token) {
+
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optUser = userRepository.findById(userId);
+		if (optUser.isPresent()) {
+			List<Note> noteList = noteRepository.findAll();
+			for (int i = 0; i < noteList.size(); i++) {
+				for (int j = 0; j < noteList.size(); j++) {
+					if (noteList.get(i).getCreationtTime().compareTo(noteList.get(i).getCreationtTime()) < 0) {
+						Note note = noteList.get(i);
+						noteList.set(i, noteList.get(j));
+						noteList.set(j, note);
+					}
+				}
+			}
+			return noteList;
+		} else {
+			throw new UserException("User not present ");
 		}
 	}
 
