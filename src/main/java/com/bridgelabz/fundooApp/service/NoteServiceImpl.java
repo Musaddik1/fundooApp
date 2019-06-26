@@ -1,6 +1,7 @@
 package com.bridgelabz.fundooApp.service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -254,15 +255,15 @@ public class NoteServiceImpl implements NoteService {
 		Optional<User> optUser = userRepository.findById(userId);
 		if (optUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
-			for (int i = 0; i < noteList.size(); i++) {
-				for (int j = 0; j < noteList.size() - 1; j++) {
-					if (noteList.get(i).getTitle().compareTo(noteList.get(j).getTitle()) > 0) {
-						Note note = noteList.get(i);
-						noteList.set(i, noteList.get(j));
-						noteList.set(j, note);
-					}
-				}
-			}
+			noteList.sort(Comparator.comparing(Note::getTitle));
+		
+			/*
+			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
+			 * noteList.size() - 1; j++) { if
+			 * (noteList.get(i).getTitle().compareTo(noteList.get(j).getTitle()) > 0) { Note
+			 * note = noteList.get(i); noteList.set(i, noteList.get(j)); noteList.set(j,
+			 * note); } } }
+			 */
 			return noteList;
 		} else {
 			throw new UserException("User not present");
@@ -277,15 +278,14 @@ public class NoteServiceImpl implements NoteService {
 		Optional<User> optUser = userRepository.findById(userId);
 		if (optUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
-			for (int i = 0; i < noteList.size(); i++) {
-				for (int j = 0; j < noteList.size(); j++) {
-					if (noteList.get(i).getCreationtTime().compareTo(noteList.get(i).getCreationtTime()) < 0) {
-						Note note = noteList.get(i);
-						noteList.set(i, noteList.get(j));
-						noteList.set(j, note);
-					}
-				}
-			}
+			noteList.sort(Comparator.comparing(Note::getCreationtTime).reversed());
+			/*
+			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
+			 * noteList.size(); j++) { if
+			 * (noteList.get(i).getCreationtTime().compareTo(noteList.get(i).
+			 * getCreationtTime()) < 0) { Note note = noteList.get(i); noteList.set(i,
+			 * noteList.get(j)); noteList.set(j, note); } } }
+			 */
 			return noteList;
 		} else {
 			throw new UserException("User not present ");
@@ -303,17 +303,18 @@ public class NoteServiceImpl implements NoteService {
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optionalNote = userRepository.findById(userId);
 		if (optionalNote.isPresent()) {
-			List<Note> notelList = noteRepository.findAll();
-			for (int i = 0; i < notelList.size(); i++) {
-				for (int j = 0; j < notelList.size(); j++) {
-					if (notelList.get(i).getUserId().compareTo(notelList.get(j).getUserId()) < 0) {
-						Note note = notelList.get(i);
-						notelList.set(i, notelList.get(j));
-						notelList.set(j, note);
-					}
-				}
-			}
-			return notelList;
+			List<Note> noteList = noteRepository.findAll();
+			noteList.sort(Comparator.comparing(Note::getNoteId));
+
+			/*
+			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
+			 * noteList.size(); j++) { if
+			 * (noteList.get(i).getNoteId().compareTo(noteList.get(j).getNoteId()) > 0) {
+			 * Note note = noteList.get(i); noteList.set(i, noteList.get(j));
+			 * noteList.set(j, note); } } }
+			 */
+
+			return noteList;
 
 		} else {
 			throw new UserException("User not found");
