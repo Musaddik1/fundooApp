@@ -1,5 +1,6 @@
 package com.bridgelabz.fundooApp.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.bridgelabz.fundooApp.dto.NoteDto;
@@ -7,7 +8,7 @@ import com.bridgelabz.fundooApp.model.Note;
 
 public interface NoteService {
 
-	String createNote(NoteDto noteDto, String token);
+	String createNote(NoteDto noteDto, String token) throws IOException;
 
 	String updateNote(NoteDto noteDto, String noteId, String token);
 
@@ -34,5 +35,6 @@ public interface NoteService {
 	List<Note> sortByType(String token);
 
 	List<Note> sortById(String token);
-
+	
+	List<Note> search(String text,String token);
 }

@@ -1,13 +1,12 @@
 package com.bridgelabz.fundooApp.dto;
 
 public class NoteDto {
-	
+
 	private String title;
 	private String description;
-	
-	public NoteDto()
-	{
-		
+
+	public NoteDto() {
+
 	}
 
 	/**
@@ -15,7 +14,6 @@ public class NoteDto {
 	 * @param description
 	 */
 	public NoteDto(String title, String description) {
-		super();
 		this.title = title;
 		this.description = description;
 	}
@@ -40,6 +38,5 @@ public class NoteDto {
 	public String toString() {
 		return "NoteDto [title=" + title + ", description=" + description + "]";
 	}
-	
 
 }

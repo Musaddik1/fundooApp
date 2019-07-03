@@ -121,6 +121,7 @@ public class LabelServiceImpl implements LabelService {
 				Note note = optNote.get();
 				List<Label> labelList = new ArrayList<Label>();
 				Label label = optLabel.get();
+			
 				if (note.getLabels() != null) {
 					labelList = note.getLabels();
 

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,9 @@ public class NoteServiceImpl implements NoteService {
 	private ModelMapper modelMapper;
 	@Autowired
 	private NoteRepository noteRepository;
+	
+	@Autowired
+	private ElasticSearch elasticSearch;
 
 	@Override
 	public String createNote(NoteDto noteDto, String token) {
@@ -41,6 +43,7 @@ public class NoteServiceImpl implements NoteService {
 			note.setUpdateTime(LocalDateTime.now());
 			note.setUserId(userId);
 			noteRepository.save(note);
+			elasticSearch.createNote(note);
 			// return new Response(200, "note created ", null);
 			return "note created";
 
@@ -63,6 +66,7 @@ public class NoteServiceImpl implements NoteService {
 				note.setTitle(noteDto.getTitle());
 				note.setDescription(noteDto.getDescription());
 				noteRepository.save(note);
+				elasticSearch.updateNote(noteId);
 
 				return "note updated";
 
@@ -86,6 +90,7 @@ public class NoteServiceImpl implements NoteService {
 				return note.isTrash();
 			}).map(note -> {
 				noteRepository.delete(note);
+				elasticSearch.deleteNote(noteId);
 				// return new Response(200, "deleted note", null);
 				return "deleted note";
 			}).orElseThrow(() -> new UserException("note not found"));
@@ -255,15 +260,7 @@ public class NoteServiceImpl implements NoteService {
 		Optional<User> optUser = userRepository.findById(userId);
 		if (optUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
-			noteList.sort(Comparator.comparing(Note::getTitle));
-		
-			/*
-			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
-			 * noteList.size() - 1; j++) { if
-			 * (noteList.get(i).getTitle().compareTo(noteList.get(j).getTitle()) > 0) { Note
-			 * note = noteList.get(i); noteList.set(i, noteList.get(j)); noteList.set(j,
-			 * note); } } }
-			 */
+			noteList.sort(Comparator.comparing(Note::getTitle).reversed());
 			return noteList;
 		} else {
 			throw new UserException("User not present");
@@ -279,13 +276,6 @@ public class NoteServiceImpl implements NoteService {
 		if (optUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
 			noteList.sort(Comparator.comparing(Note::getCreationtTime).reversed());
-			/*
-			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
-			 * noteList.size(); j++) { if
-			 * (noteList.get(i).getCreationtTime().compareTo(noteList.get(i).
-			 * getCreationtTime()) < 0) { Note note = noteList.get(i); noteList.set(i,
-			 * noteList.get(j)); noteList.set(j, note); } } }
-			 */
 			return noteList;
 		} else {
 			throw new UserException("User not present ");
@@ -294,32 +284,29 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<Note> sortByType(String token) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Note> sortById(String token) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optionalNote = userRepository.findById(userId);
-		if (optionalNote.isPresent()) {
+		Optional<User> optionaUser = userRepository.findById(userId);
+		if (optionaUser.isPresent()) {
 			List<Note> noteList = noteRepository.findAll();
 			noteList.sort(Comparator.comparing(Note::getNoteId));
-
-			/*
-			 * for (int i = 0; i < noteList.size(); i++) { for (int j = 0; j <
-			 * noteList.size(); j++) { if
-			 * (noteList.get(i).getNoteId().compareTo(noteList.get(j).getNoteId()) > 0) {
-			 * Note note = noteList.get(i); noteList.set(i, noteList.get(j));
-			 * noteList.set(j, note); } } }
-			 */
-
 			return noteList;
 
 		} else {
 			throw new UserException("User not found");
 		}
 
+	}
+
+	@Override
+	public List<Note> search(String text, String token) {
+		String userId=tokenGenerator.verifyToken(token);
+		List<Note> noteList=elasticSearch.searchByText(text, userId);
+		return noteList;
 	}
 
 }

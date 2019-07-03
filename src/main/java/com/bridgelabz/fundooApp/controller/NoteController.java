@@ -1,7 +1,9 @@
 package com.bridgelabz.fundooApp.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundooApp.dto.NoteDto;
 import com.bridgelabz.fundooApp.model.Note;
 import com.bridgelabz.fundooApp.response.Response;
+import com.bridgelabz.fundooApp.service.ElasticSearch;
 import com.bridgelabz.fundooApp.service.NoteService;
 
 @RestController
@@ -25,9 +28,10 @@ public class NoteController {
 
 	@Autowired
 	private NoteService noteService;
+	
 
 	@PostMapping("/note")
-	public ResponseEntity<Response> createNote(@RequestBody NoteDto noteDto, @RequestParam String token)
+	public ResponseEntity<Response> createNote(@RequestBody NoteDto noteDto, @RequestParam String token) throws IOException
 
 	{
 		String message = noteService.createNote(noteDto, token);
@@ -112,6 +116,12 @@ public class NoteController {
 	@GetMapping("/sortbyid")
 	public List<Note> sortById(@RequestParam String token) {
 		List<Note> noteList = noteService.sortById(token);
+		return noteList;
+	}
+	@GetMapping("/search")
+	public List<Note> searchByText(@RequestParam String text,@RequestParam String token)
+	{
+		List<Note> noteList=noteService.search(text, token);
 		return noteList;
 	}
 }
