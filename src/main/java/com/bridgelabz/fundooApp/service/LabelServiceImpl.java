@@ -54,40 +54,34 @@ public class LabelServiceImpl implements LabelService {
 	}
 
 	@Override
-	public String updateLabel(String token, String labeId, LabelDto labelDto) {
+	public String updateLabel(String token, String labelId, LabelDto labelDto) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		if (optUser.isPresent()) {
-
-			Optional<Label> optLabel = labelRespository.findById(labeId);
-			if (optLabel.isPresent()) {
+	
+			Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
+			if(optLabel.isPresent())
+			{
 				Label label = optLabel.get();
 				label.setLabelName(labelDto.getLabelName());
 				label.setUpdateTime(LocalDateTime.now());
 				labelRespository.save(label);
-				// return new Response(200, "success", null);
+			
 				return "label updated";
 
 			} else {
-				// return new Response(202, "label id doesnt match", null);
-				throw new LabelException("label id doesnt match");
+				
+				throw new LabelException("label id or user dont match");
 			}
-		} else {
-			throw new UserException("User doesnt match");
-		}
+	
 	}
 
 	@Override
 	public String deleteLabel(String token, String labelId) {
 
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		System.out.println(userId);
-		if (optUser.isPresent()) {
-			Optional<Label> optLabel = labelRespository.findById(labelId);
-			System.out.println("LabelServiceImpl.deleteLabel()");
-			if (optLabel.isPresent()) {
-				System.out.println("LabelServiceImpl.deleteLabel()");
+		Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if(optLabel.isPresent())
+		{
+			
 				Label label = optLabel.get();
 				labelRespository.delete(label);
 				return "label deleted";
@@ -96,10 +90,7 @@ public class LabelServiceImpl implements LabelService {
 
 				throw new LabelException("label doesnt exist");
 			}
-		} else {
-
-			throw new UserException("User not found");
-		}
+		
 	}
 
 	@Override
@@ -183,18 +174,15 @@ public class LabelServiceImpl implements LabelService {
 	@Override
 	public Label getLabel(String token, String labelId) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		if (optUser.isPresent()) {
-			Optional<Label> optLabel = labelRespository.findById(labelId);
-			if (optLabel.isPresent()) {
+		Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if(optLabel.isPresent())
+		{
 				Label label = optLabel.get();
 				return label;
 			} else {
-				throw new LabelException("label not present");
+				throw new LabelException("label or User not present");
 			}
-		} else {
-			throw new UserException("User not present");
-		}
+		
 	}
 
 }

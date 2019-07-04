@@ -32,70 +32,67 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ElasticSearchImpl implements ElasticSearch {
 
-	private  final String INDEX="elasticsearch";
-	private String TYPE="note";
-	
-	
+	private final String INDEX = "elasticsearch";
+	private String TYPE = "note";
+
 	@Autowired
 	private RestHighLevelClient restHighLevelClient;
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private NoteRepository noteRepository;
+
 	@Override
 	public String createNote(Note note) {
 
 		@SuppressWarnings("unchecked")
-		Map<String, Object> mapper=objectMapper.convertValue(note, Map.class);
-		IndexRequest indexRequest=new IndexRequest(INDEX,TYPE,note.getNoteId()).source(mapper);
-		IndexResponse indexResponse=null;
+		Map<String, Object> mapper = objectMapper.convertValue(note, Map.class);
+		IndexRequest indexRequest = new IndexRequest(INDEX, TYPE, note.getNoteId()).source(mapper);
+		IndexResponse indexResponse = null;
 		try {
-			indexResponse= restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
-	
+			indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
-		
+
 		return indexResponse.getResult().name();
 	}
 
 	@Override
 	public String updateNote(String noteId) {
-	
-		Optional<Note> optNote=noteRepository.findByNoteId(noteId);
-		if(optNote.isPresent())
-		{
-			Note note=optNote.get();
+
+		Optional<Note> optNote = noteRepository.findByNoteId(noteId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
 			@SuppressWarnings("unchecked")
-			Map<String, Object> mapper=objectMapper.convertValue(note, Map.class);
-			UpdateRequest updateRequest=new UpdateRequest(INDEX,TYPE,note.getNoteId()).doc(mapper);
-			UpdateResponse updateResponse=null;
+			Map<String, Object> mapper = objectMapper.convertValue(note, Map.class);
+			UpdateRequest updateRequest = new UpdateRequest(INDEX, TYPE, note.getNoteId()).doc(mapper);
+			UpdateResponse updateResponse = null;
 			try {
-				updateResponse=restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
+				updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
 			}
 			return updateResponse.getResult().name();
-		}
-		else
-		{
+		} else {
 			throw new NoteException("note not present");
 		}
-		
+
 	}
 
 	@Override
 	public String deleteNote(String noteId) {
-		
-		DeleteRequest deleteRequest=new DeleteRequest(INDEX, TYPE, noteId);
-		DeleteResponse deleteResponse=null;
+
+		DeleteRequest deleteRequest = new DeleteRequest(INDEX, TYPE, noteId);
+		DeleteResponse deleteResponse = null;
 		try {
-			deleteResponse=restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+			deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
 		return deleteResponse.getResult().name();
@@ -103,40 +100,35 @@ public class ElasticSearchImpl implements ElasticSearch {
 
 	@Override
 	public List<Note> searchByText(String title, String userId) {
-	
-		SearchRequest searchRequest=new SearchRequest();
-		SearchSourceBuilder searchSourceBuilder=new SearchSourceBuilder();
-		BoolQueryBuilder queryBuilder=QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*"+title+"*")
+
+		SearchRequest searchRequest = new SearchRequest();
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*" + title + "*")
 				.analyzeWildcard(true).field("title").field("description"))
 				.filter(QueryBuilders.termQuery("userId", userId));
 		searchSourceBuilder.query(queryBuilder);
 		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse=null;
+		SearchResponse searchResponse = null;
 		try {
-			searchResponse=restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+			searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-		
-		
+
 		return getSearchResult(searchResponse);
 	}
-	private List<Note> getSearchResult(SearchResponse searchResponse)
-	{
-		SearchHit[] searchHits=searchResponse.getHits().getHits();
-		List<Note> noteList=new ArrayList<Note>();
-		if(searchHits.length>0)
-		{
-			Arrays.stream(searchHits).forEach(hit->noteList.add(objectMapper.convertValue(hit.getSourceAsMap(), Note.class)));
-			
+
+	private List<Note> getSearchResult(SearchResponse searchResponse) {
+		SearchHit[] searchHits = searchResponse.getHits().getHits();
+		List<Note> noteList = new ArrayList<Note>();
+		if (searchHits.length > 0) {
+			Arrays.stream(searchHits)
+					.forEach(hit -> noteList.add(objectMapper.convertValue(hit.getSourceAsMap(), Note.class)));
+
 		}
-		
+
 		return noteList;
 	}
-
-	
-
-	
 
 }

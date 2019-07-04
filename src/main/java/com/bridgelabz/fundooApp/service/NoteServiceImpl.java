@@ -29,7 +29,7 @@ public class NoteServiceImpl implements NoteService {
 	private ModelMapper modelMapper;
 	@Autowired
 	private NoteRepository noteRepository;
-	
+
 	@Autowired
 	private ElasticSearch elasticSearch;
 
@@ -55,27 +55,22 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public String updateNote(NoteDto noteDto, String noteId, String token) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findByUserId(userId);
-		if (optUser.isPresent()) {
-			Optional<Note> optNote = noteRepository.findById(noteId);
-			if (optNote.isPresent()) {
-				Note note = optNote.get();
+		Optional<Note> optNote = noteRepository.findByNoteIdAndUserId(noteId, userId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
 
-				note.setUpdateTime(LocalDateTime.now());
+			note.setUpdateTime(LocalDateTime.now());
 
-				note.setTitle(noteDto.getTitle());
-				note.setDescription(noteDto.getDescription());
-				noteRepository.save(note);
-				elasticSearch.updateNote(noteId);
+			note.setTitle(noteDto.getTitle());
+			note.setDescription(noteDto.getDescription());
+			noteRepository.save(note);
+			elasticSearch.updateNote(noteId);
 
-				return "note updated";
+			return "note updated";
 
-			} else {
-				// return new Response(202, "note doesnt exist", null);
-				throw new NoteException("note doesnt exist");
-			}
 		} else {
-			throw new UserException("User doesnt exist");
+			// return new Response(202, "note doesnt exist", null);
+			throw new NoteException("note doesnt exist");
 		}
 
 	}
@@ -120,17 +115,12 @@ public class NoteServiceImpl implements NoteService {
 	public Note getNote(String noteId, String token) {
 
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findByUserId(userId);
-		if (optUser.isPresent()) {
-			Optional<Note> optNote = noteRepository.findById(noteId);
-			if (optNote.isPresent()) {
-				Note note = optNote.get();
-				return note;
-			} else {
-				throw new NoteException("noteId doesnt match");
-			}
+		Optional<Note> optNote = noteRepository.findByNoteIdAndUserId(noteId, userId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
+			return note;
 		} else {
-			throw new UserException("User is not present");
+			throw new NoteException("noteId or user not match");
 		}
 
 	}
@@ -177,26 +167,21 @@ public class NoteServiceImpl implements NoteService {
 	public String archiveAndUnarchive(String token, String noteId) {
 
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		if (optUser.isPresent()) {
-			Optional<Note> optNote = noteRepository.findById(noteId);
-			if (optNote.isPresent()) {
-				Note note = optNote.get();
-				if (note.isArchive()) {
-					note.setArchive(false);
-					noteRepository.save(note);
-					return "note is unarchived";
-				} else {
-
-					note.setArchive(true);
-					noteRepository.save(note);
-					return "note is archived";
-				}
+		Optional<Note> optNote = noteRepository.findByNoteIdAndUserId(noteId, userId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
+			if (note.isArchive()) {
+				note.setArchive(false);
+				noteRepository.save(note);
+				return "note is unarchived";
 			} else {
-				throw new NoteException("note is not present");
+
+				note.setArchive(true);
+				noteRepository.save(note);
+				return "note is archived";
 			}
 		} else {
-			throw new UserException("User not present");
+			throw new NoteException("Note or User not present");
 		}
 
 	}
@@ -204,54 +189,44 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public String trashAndUntrash(String token, String noteId) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		if (optUser.isPresent()) {
-			Optional<Note> optNote = noteRepository.findById(noteId);
-			if (optNote.isPresent()) {
-				Note note = optNote.get();
-				if (note.isTrash()) {
-					note.setTrash(false);
-					noteRepository.save(note);
-					return "note is untrash";
-				} else {
-					note.setTrash(true);
-					noteRepository.save(note);
-					return "note in trash";
-				}
+		Optional<Note> optNote = noteRepository.findByNoteIdAndUserId(noteId, userId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
+			if (note.isTrash()) {
+				note.setTrash(false);
+				noteRepository.save(note);
+				return "note is untrash";
 			} else {
-				throw new NoteException("note is not present");
+				note.setTrash(true);
+				noteRepository.save(note);
+				return "note in trash";
 			}
-
 		} else {
-			throw new UserException("User doesnt exist");
+			throw new NoteException("note or user not present");
 		}
+
 	}
 
 	@Override
 	public String pinAndUnpin(String token, String noteId) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<User> optUser = userRepository.findById(userId);
-		if (optUser.isPresent()) {
-			Optional<Note> optNote = noteRepository.findById(noteId);
-			if (optNote.isPresent()) {
-				Note note = optNote.get();
-				if (note.isPin()) {
-					note.setPin(false);
-					noteRepository.save(note);
-					return "note is unpin";
-				} else {
-					note.setPin(true);
-					noteRepository.save(note);
-					return "note is pin";
-
-				}
+		Optional<Note> optNote = noteRepository.findByNoteIdAndUserId(noteId, userId);
+		if (optNote.isPresent()) {
+			Note note = optNote.get();
+			if (note.isPin()) {
+				note.setPin(false);
+				noteRepository.save(note);
+				return "note is unpin";
 			} else {
-				throw new NoteException("note doesnt exist");
-			}
+				note.setPin(true);
+				noteRepository.save(note);
+				return "note is pin";
 
+			}
 		} else {
-			throw new UserException("User doesnt present");
+			throw new NoteException("note or User dont exist");
 		}
+
 	}
 
 	@Override
@@ -304,8 +279,8 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<Note> search(String text, String token) {
-		String userId=tokenGenerator.verifyToken(token);
-		List<Note> noteList=elasticSearch.searchByText(text, userId);
+		String userId = tokenGenerator.verifyToken(token);
+		List<Note> noteList = elasticSearch.searchByText(text, userId);
 		return noteList;
 	}
 
