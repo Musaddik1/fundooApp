@@ -19,5 +19,5 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
 	Optional<Note> findByNoteIdAndUserId(String noteId, String userId);
 	
-
+	
 }

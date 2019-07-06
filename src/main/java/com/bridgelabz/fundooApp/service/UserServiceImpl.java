@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 				user.setCreationTime(LocalDateTime.now());
 				user.setUpdateTime(LocalDateTime.now());
 				User savedUser = userRepository.save(user);
-				String token = tokenGenerator.generateToken(savedUser.getUserid());
+				String token = tokenGenerator.generateToken(savedUser.getUserId());
 				String activationUrl = getLink(requestUrl, "/verification/", token);
 				Email email = new Email();
 				email.setTo("musaddikshaikh10@gmail.com");
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 			try {
 				if (EncryptUtil.isPassword(loginDto, user)) {
 					if (user.isVerified()) {
-						return tokenGenerator.generateToken(user.getUserid());
+						return tokenGenerator.generateToken(user.getUserId());
 					} else {
 						throw new UserException("please verify your email");
 					}
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 		Optional<User> optUser = userRepository.findByEmail(emailId);
 		if (optUser.isPresent()) {
 			User user = optUser.get();
-			String id = user.getUserid();
+			String id = user.getUserId();
 			try {
 				String token = tokenGenerator.generateToken(id);
 				String resetUrl = getLink(requestUrl, "/resetpassword/", token);

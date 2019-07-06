@@ -44,7 +44,7 @@ public class LabelServiceImpl implements LabelService {
 			Label label = modelMapper.map(labelDto, Label.class);
 			label.setCreationTime(LocalDateTime.now());
 			label.setUpdateTime(LocalDateTime.now());
-			label.setUserId(user.getUserid());
+			label.setUserId(user.getUserId());
 			labelRespository.save(label);
 			return "label created";
 		} else {

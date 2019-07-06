@@ -37,4 +37,5 @@ public interface NoteService {
 	List<Note> sortById(String token);
 	
 	List<Note> search(String text,String token);
+	
 }
