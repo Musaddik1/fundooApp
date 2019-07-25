@@ -11,8 +11,8 @@ import com.bridgelabz.fundooApp.response.Response;
 public class UserExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Response> handleException(String message) {
-		Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
+	public ResponseEntity<Response> handleException() {
+		Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "something went wrong", null);
 		return new ResponseEntity<Response>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 

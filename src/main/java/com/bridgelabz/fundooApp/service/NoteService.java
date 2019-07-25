@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.bridgelabz.fundooApp.dto.NoteDto;
+import com.bridgelabz.fundooApp.model.Label;
 import com.bridgelabz.fundooApp.model.Note;
 
 public interface NoteService {
@@ -12,7 +13,7 @@ public interface NoteService {
 
 	String updateNote(NoteDto noteDto, String noteId, String token);
 
-	String deleteNote(String noteId, String token);
+	String deleteNote(String token, String noteId);
 
 	Note getNote(String noteId, String token);
 
@@ -36,6 +37,7 @@ public interface NoteService {
 
 	List<Note> sortById(String token);
 	
-	List<Note> search(String text,String token);
-	
+	List<Note> search(String text);
+	List<Note> getAllUserNote();
+	List<Label> getLabelOfNotes(String noteId,String token);
 }

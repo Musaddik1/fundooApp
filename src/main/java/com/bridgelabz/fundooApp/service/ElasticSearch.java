@@ -11,6 +11,6 @@ public interface ElasticSearch {
 	String createNote(Note note) ;
 	String updateNote(String noteId);
 	String deleteNote(String noteId);
-	List<Note> searchByText(String title,String token);
+	List<Note> searchByText(String title);
 	
 }

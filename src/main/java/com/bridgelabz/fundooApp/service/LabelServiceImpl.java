@@ -19,7 +19,7 @@ import com.bridgelabz.fundooApp.repository.NoteRepository;
 import com.bridgelabz.fundooApp.repository.UserRepository;
 import com.bridgelabz.fundooApp.utility.JWTTokenGenerator;
 
-@Service
+@Service("LabelService")
 public class LabelServiceImpl implements LabelService {
 
 	@Autowired
@@ -56,41 +56,38 @@ public class LabelServiceImpl implements LabelService {
 	@Override
 	public String updateLabel(String token, String labelId, LabelDto labelDto) {
 		String userId = tokenGenerator.verifyToken(token);
-	
-			Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
-			if(optLabel.isPresent())
-			{
-				Label label = optLabel.get();
-				label.setLabelName(labelDto.getLabelName());
-				label.setUpdateTime(LocalDateTime.now());
-				labelRespository.save(label);
-			
-				return "label updated";
+        Optional<Label> optLabel = labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if (optLabel.isPresent()) {
+			Label label = optLabel.get();
+			label.setLabelName(labelDto.getLabelName());
+			label.setUpdateTime(LocalDateTime.now());
+			labelRespository.save(label);
 
-			} else {
-				
-				throw new LabelException("label id or user dont match");
-			}
-	
+			return "label updated";
+
+		} else {
+
+			throw new LabelException("label id or user dont match");
+		}
+
 	}
 
 	@Override
 	public String deleteLabel(String token, String labelId) {
 
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
-		if(optLabel.isPresent())
-		{
-			
-				Label label = optLabel.get();
-				labelRespository.delete(label);
-				return "label deleted";
+		Optional<Label> optLabel = labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if (optLabel.isPresent()) {
 
-			} else {
+			Label label = optLabel.get();
+			labelRespository.delete(label);
+			return "label deleted";
 
-				throw new LabelException("label doesnt exist");
-			}
-		
+		} else {
+
+			throw new LabelException("label doesnt exist");
+		}
+
 	}
 
 	@Override
@@ -112,7 +109,7 @@ public class LabelServiceImpl implements LabelService {
 				Note note = optNote.get();
 				List<Label> labelList = new ArrayList<Label>();
 				Label label = optLabel.get();
-			
+
 				if (note.getLabels() != null) {
 					labelList = note.getLabels();
 
@@ -174,15 +171,14 @@ public class LabelServiceImpl implements LabelService {
 	@Override
 	public Label getLabel(String token, String labelId) {
 		String userId = tokenGenerator.verifyToken(token);
-		Optional<Label> optLabel=labelRespository.findByLabelIdAndUserId(labelId, userId);
-		if(optLabel.isPresent())
-		{
-				Label label = optLabel.get();
-				return label;
-			} else {
-				throw new LabelException("label or User not present");
-			}
-		
+		Optional<Label> optLabel = labelRespository.findByLabelIdAndUserId(labelId, userId);
+		if (optLabel.isPresent()) {
+			Label label = optLabel.get();
+			return label;
+		} else {
+			throw new LabelException("label or User not present");
+		}
+
 	}
 
 }

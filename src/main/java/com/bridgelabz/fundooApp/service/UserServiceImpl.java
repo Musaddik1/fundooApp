@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.bridgelabz.fundooApp.dto.*;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
@@ -106,7 +105,7 @@ public class UserServiceImpl implements UserService {
 			String id = user.getUserId();
 			try {
 				String token = tokenGenerator.generateToken(id);
-				String resetUrl = getLink(requestUrl, "/resetpassword/", token);
+				String resetUrl = "http://localhost:4200/reset/"+token;
 				Email email = new Email();
 				email.setTo("musaddikshaikh5@gmail.com");
 				email.setSubject("resetPassword");
@@ -132,6 +131,7 @@ public class UserServiceImpl implements UserService {
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			user.setPassword(encoder.encode(password));
+			//user.setPassword(password);
 			user.setUpdateTime(LocalDateTime.now());
 			userRepository.save(user);
 			// return new Response(200, "password changed successfully..", null);

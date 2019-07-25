@@ -17,7 +17,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 @Service
 public class AmazonClient {
 
-    private AmazonS3 s3client;
+   @SuppressWarnings("unused")
+private AmazonS3 s3client;
 
     @Value("${amazonProperties.endpointUrl}")
     private String endpointUrl;
@@ -32,9 +33,10 @@ public class AmazonClient {
     private String secretKey;
 
 
+@SuppressWarnings("deprecation")
 @PostConstruct
     private void initializeAmazon() {
        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-       this.s3client = new AmazonS3Client(credentials);
+       s3client = new AmazonS3Client(credentials);
 }
 }

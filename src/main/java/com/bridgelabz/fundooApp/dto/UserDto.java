@@ -6,15 +6,10 @@ import javax.validation.constraints.Size;
 
 public class UserDto {
 
-	@NotNull
-	@Size(min = 2, max = 30)
+	
 	private String name;
-
 	private String email;
-
-	@Pattern(regexp = "^[6-9]?[0-9]{9}+$")
 	private String phoneNumber;
-	@NotNull
 	private String password;
 
 	public UserDto() {

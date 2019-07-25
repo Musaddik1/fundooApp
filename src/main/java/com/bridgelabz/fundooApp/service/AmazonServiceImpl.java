@@ -26,86 +26,86 @@ import com.bridgelabz.fundooApp.repository.UserRepository;
 import com.bridgelabz.fundooApp.utility.JWTTokenGenerator;
 
 @Service
-public class AmazonServiceImpl implements AmazonService{
+public class AmazonServiceImpl implements AmazonService {
 
 	private AmazonS3 s3client;
 	@Autowired
 	private UserRepository userRepository;
 
-	   @Value("https://988750701731.signin.aws.amazon.com/console")
-	   private String endpointUrl;
-	   @Value("musaddik-bucket")
-	   private String bucketName;
-	   @Value("AKIA6MNRCMSRU3CVI2GO")
-	   private String accessKey;
-	   @Value("9K3Ic16CPb2iPraA8urAR1i2qekoZw+0AwCza5xk")
-	   private String secretKey;
+	@Value("https://988750701731.signin.aws.amazon.com/console")
+	private String endpointUrl;
+	@Value("musaddik-bucket")
+	private String bucketName;
+	@Value("AKIA6MNRCMSRZNJJQRSK")
+	private String accessKey;
+	@Value("m2wPdCuYvcDomswv1DUnUk4En4LAldZSkzl5uoxN")
+	private String secretKey;
 
-	   @Autowired
-	   private JWTTokenGenerator tokenGenerator;
-	   
-	   @SuppressWarnings("deprecation")
+
+
+	@Autowired
+	private JWTTokenGenerator tokenGenerator;
+
+	@SuppressWarnings("deprecation")
 	@PostConstruct
-	   private void initializeAmazon() {
-	       AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-	       this.s3client = new AmazonS3Client(credentials);
-	   }
+	private void initializeAmazon() {
+		AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+		this.s3client = new AmazonS3Client(credentials);
+	}
 
-	   private File convertMultiPartToFile(MultipartFile file) throws IOException {
-	       File convFile = new File(file.getOriginalFilename());
-	       FileOutputStream fos = new FileOutputStream(convFile);
-	       fos.write(file.getBytes());
-	       fos.close();
-	       return convFile;
-	   }
+	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+		File convFile = new File(file.getOriginalFilename());
+		FileOutputStream fos = new FileOutputStream(convFile);
+		fos.write(file.getBytes());
+		fos.close();
+		return convFile;
+	}
 
-	   private String generateFileName(MultipartFile multiPart) {
-	       return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
-	   }
+	private String generateFileName(MultipartFile multiPart) {
+		return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+	}
 
-	   private void uploadFileTos3bucket(String fileName, File file) {
-	       s3client.putObject(
-	               new PutObjectRequest (bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-	   }
+	private void uploadFileTos3bucket(String fileName, File file) {
+		s3client.putObject(
+				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+	}
 
-	   @Override
-	   public String uploadFile(MultipartFile multipartFile,String token) throws IOException {
-		   String userId=tokenGenerator.verifyToken(token);
-		   Optional<User> optUser=userRepository.findById(userId);
-		   if(optUser.isPresent())
-		   {
-	      
-	    
-	           File file = convertMultiPartToFile(multipartFile);
-	           String fileName = generateFileName(multipartFile);
-	           String fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-	           uploadFileTos3bucket(fileName,  file);
-	           file.delete();
-	       return fileUrl;
-		   }else
-		   {
-			   throw new UserException("User not present");
-		   }
-	   }
+	@Override
+	public String uploadFile(MultipartFile multipartFile, String token) throws IOException {
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optUser = userRepository.findById(userId);
+		User user=optUser.get();
+		if (optUser.isPresent()) {
 
-	   
-	   @Override
+			File file = convertMultiPartToFile(multipartFile);
+			String fileName = generateFileName(multipartFile);
+			String fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
+			uploadFileTos3bucket(fileName, file);
+			file.delete();
+			user.setImageUrl(fileUrl);
+			System.out.println(user.getImageUrl());
+			return fileUrl;
+		} else {
+			throw new UserException("User not present");
+		}
+	}
+
+	@Override
 	public String deleteFileFromS3Bucket(String fileName, String token) {
 
-	String userId=tokenGenerator.verifyToken(token);
-	Optional<User> optionaluser = userRepository.findById(userId);
-	if (optionaluser.isPresent()) {
-	User user = optionaluser.get();
-	s3client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
-	user.setImageUrl(null);
-	userRepository.save(user);
+		String userId = tokenGenerator.verifyToken(token);
+		Optional<User> optionaluser = userRepository.findById(userId);
+		if (optionaluser.isPresent()) {
+			User user = optionaluser.get();
+			s3client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+			user.setImageUrl(null);
+			userRepository.save(user);
 
-	return "file deleted";
-	}
-	else
-	{
-		throw new UserException("User not present");
-	}
+			return "file deleted";
+		} else {
+			throw new UserException("User not present");
+		}
 
 	}
+	
 }

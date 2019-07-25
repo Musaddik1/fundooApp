@@ -1,6 +1,7 @@
 package com.bridgelabz.fundooApp.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.bridgelabz.fundooApp.dto.NoteDto;
 import com.bridgelabz.fundooApp.exception.NoteException;
 import com.bridgelabz.fundooApp.exception.UserException;
+import com.bridgelabz.fundooApp.model.Label;
 import com.bridgelabz.fundooApp.model.Note;
 import com.bridgelabz.fundooApp.model.User;
 import com.bridgelabz.fundooApp.repository.NoteRepository;
@@ -76,7 +78,7 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public String deleteNote(String noteId, String token) {
+	public String deleteNote(String token, String noteId) {
 		String userId = tokenGenerator.verifyToken(token);
 		Optional<User> optUser = userRepository.findByUserId(userId);
 		return optUser.filter(user -> user != null).map(user -> {
@@ -128,11 +130,12 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<Note> getAllNote(String token) {
 
-		String userId = tokenGenerator.verifyToken(token);
-		List<Note> notes = noteRepository.findAll();
-		List<Note> filteredNotes = notes.stream().filter(note -> {
-			return note.getUserId().equals(userId);
-		}).collect(Collectors.toList());
+		/*
+		 * String userId = tokenGenerator.verifyToken(token); List<Note> notes =
+		 * noteRepository.findAll(); List<Note> filteredNotes =
+		 * notes.stream().filter(note -> { return note.getUserId().equals(userId);
+		 * }).collect(Collectors.toList());
+		 */
 		/*
 		 * List<NoteDto> noteslist = new ArrayList<NoteDto>(); for (Note userNotes :
 		 * note) { NoteDto noteDto = modelMapper.map(userNotes, NoteDto.class);
@@ -140,21 +143,36 @@ public class NoteServiceImpl implements NoteService {
 		 * 
 		 * } return noteslist;
 		 */
-		return filteredNotes;
+		 String userId=tokenGenerator.verifyToken(token);
+		 Optional<User> optUser=userRepository.findById(userId);
+		 List<Note> notesList=new ArrayList<Note>();
+		 if(optUser.isPresent())
+		 {
+			 List<Note> tempList=noteRepository.findByUserId(userId);
+			 for(Note note:tempList)
+			 {
+				 if(!note.isArchive()&&!note.isTrash())
+				 {
+					 notesList.add(note);
+				 }
+			 }
+		 }
+		return notesList;
 	}
 
 	@Override
 	public List<Note> getTrash(String token) {
 		String userId = tokenGenerator.verifyToken(token);
 		List<Note> notes = noteRepository.findByUserId(userId);
-		List<Note> noteslist = notes.stream().filter(data -> data.isTrash()).collect(Collectors.toList());
+		List<Note> noteList = noteRepository.findByUserIdAndIsTrash(userId, true);
+		//List<Note> noteslist = notes.stream().filter(data -> data.isTrash()).collect(Collectors.toList());
 		/*
 		 * List<NoteDto> noteslist = new ArrayList<NoteDto>(); for (Note note : notes) {
 		 * NoteDto noteDto = modelMapper.map(note, NoteDto.class);
 		 * 
 		 * if (note.isTrash() == true) { noteslist.add(noteDto); } } return noteslist;
 		 */
-		return noteslist;
+		return noteList;
 	}
 
 	@Override
@@ -278,10 +296,51 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public List<Note> search(String text, String token) {
-		String userId = tokenGenerator.verifyToken(token);
-		List<Note> noteList = elasticSearch.searchByText(text, userId);
+	public List<Note> search(String text) {
+	
+		List<Note> noteList = elasticSearch.searchByText(text);
 		return noteList;
 	}
 
+	
+	@Override
+	public List<Note> getAllUserNote() {
+		/*
+		 * List<Note> sortedNote = new ArrayList<Note>(); List<User>
+		 * userlist=userRepository.findAll();
+		 * 
+		 * 
+		 * 
+		 * for (User user : userlist) {
+		 * 
+		 * List<Note> notesList=noteRepository.findByUserId(user.getUserId());
+		 * 
+		 * for(Note note:notesList) { sortedNote.add(note); }
+		 * 
+		 * 
+		 * 
+		 * } sortedNote.sort(Comparator.comparing(Note::getTitle).reversed()); return
+		 * sortedNote;
+		 */
+		List<Note> notesList=noteRepository.findByOrderByTitleDesc();
+		return notesList;
+}
+
+	@Override
+	public List<Label> getLabelOfNotes(String noteId, String token) {
+		
+		String userId=tokenGenerator.verifyToken(token);
+		Optional<User> optUser=userRepository.findById(userId);
+		if(optUser.isPresent())
+		{
+			Optional<Note> optNote=noteRepository.findById(noteId);
+			if(optNote.isPresent())
+			{
+				Note note=optNote.get();
+				List<Label> labelList=note.getLabels();
+				return labelList;
+			}
+		}
+		return null;
+	}
 }

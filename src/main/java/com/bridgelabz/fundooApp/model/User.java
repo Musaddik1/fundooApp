@@ -14,7 +14,7 @@ public class User {
 	@Id
 	private String userId;
 	// @Indexed(unique=true)
-	@Email(message = "Email should not be null")
+	//@Email(message = "Email should not be null")
 	private String email;
 
 	private String name;

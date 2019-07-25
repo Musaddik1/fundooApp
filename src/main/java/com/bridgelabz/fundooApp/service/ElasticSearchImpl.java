@@ -1,6 +1,8 @@
 package com.bridgelabz.fundooApp.service;
 
 import java.io.IOException;
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,13 +101,12 @@ public class ElasticSearchImpl implements ElasticSearch {
 	}
 
 	@Override
-	public List<Note> searchByText(String title, String userId) {
+	public List<Note> searchByText(String title) {
 
 		SearchRequest searchRequest = new SearchRequest();
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*" + title + "*")
-				.analyzeWildcard(true).field("title").field("description"))
-				.filter(QueryBuilders.termQuery("userId", userId));
+				.analyzeWildcard(true).field("title").field("description"));
 		searchSourceBuilder.query(queryBuilder);
 		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse = null;

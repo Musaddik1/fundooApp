@@ -10,14 +10,18 @@ import java.util.Optional;
 
 public interface NoteRepository extends MongoRepository<Note, String> {
 
-	Optional<Note> findByNoteId(String noteid);
+	Optional<Note> findByNoteId(String noteId);
 
-	// Optional<Note> findByUserId(String userid);
+
 	List<Note> findByUserId(String token);
 
 	List<Note> findByUserIdAndIsArchive(String userId, boolean isArchive);
 
 	Optional<Note> findByNoteIdAndUserId(String noteId, String userId);
+	List<Note> findByUserIdAndIsTrash(String userId,boolean boolean1);
+	List<Note> findByOrderByTitleAsc();
+	List<Note> findByOrderByTitleDesc();
+
 	
-	
+
 }
