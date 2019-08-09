@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundooApp.dto.NoteDto;
 import com.bridgelabz.fundooApp.model.Label;
 import com.bridgelabz.fundooApp.model.Note;
+import com.bridgelabz.fundooApp.repository.NoteRepository;
 import com.bridgelabz.fundooApp.response.Response;
 import com.bridgelabz.fundooApp.service.NoteService;
 
 @RestController
 @RequestMapping("/noteservice")
-@CrossOrigin(origins = "*",allowedHeaders = {"*"})
+@CrossOrigin(origins = "*",allowedHeaders = {"*"},exposedHeaders = {"token"})
 public class NoteController {
 
 	@Autowired
@@ -137,5 +138,12 @@ public class NoteController {
 	{
 		List<Label> labelList=noteService.getLabelOfNotes(noteId, token);
 		return labelList;
+	}
+	@PutMapping("/color")
+	public ResponseEntity<Response> setColor(@RequestHeader String token, @RequestParam String noteId,@RequestParam String colorCode)
+	{
+		String message=noteService.setColor(token, noteId, colorCode);
+		Response response=new Response(200, message, null);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 }

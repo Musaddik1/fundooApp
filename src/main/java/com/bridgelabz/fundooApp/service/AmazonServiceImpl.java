@@ -41,8 +41,7 @@ public class AmazonServiceImpl implements AmazonService {
 	@Value("m2wPdCuYvcDomswv1DUnUk4En4LAldZSkzl5uoxN")
 	private String secretKey;
 
-
-
+	
 	@Autowired
 	private JWTTokenGenerator tokenGenerator;
 
@@ -79,10 +78,12 @@ public class AmazonServiceImpl implements AmazonService {
 
 			File file = convertMultiPartToFile(multipartFile);
 			String fileName = generateFileName(multipartFile);
-			String fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
+		String fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
+		//	String fileUrl="https://"+bucketName+".signin.aws.amazon.com/"+fileName;
 			uploadFileTos3bucket(fileName, file);
-			file.delete();
+			//file.delete();
 			user.setImageUrl(fileUrl);
+			userRepository.save(user);
 			System.out.println(user.getImageUrl());
 			return fileUrl;
 		} else {
@@ -100,12 +101,14 @@ public class AmazonServiceImpl implements AmazonService {
 			s3client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 			user.setImageUrl(null);
 			userRepository.save(user);
-
+			
 			return "file deleted";
 		} else {
 			throw new UserException("User not present");
 		}
 
 	}
+
+	
 	
 }

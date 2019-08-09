@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundooApp.dto.LoginDto;
 import com.bridgelabz.fundooApp.dto.UserDto;
 import com.bridgelabz.fundooApp.response.Response;
+import com.bridgelabz.fundooApp.service.AmazonService;
 import com.bridgelabz.fundooApp.service.UserService;
 
 @RestController
@@ -31,6 +32,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AmazonService amazonService;
 
 	@PostMapping("/register")
 	public ResponseEntity<Response> registerUser( @RequestBody UserDto userDto, HttpServletRequest request) {
@@ -74,6 +78,11 @@ public class UserController {
 		String message = userService.validateUser(token);
 		Response response = new Response(HttpStatus.OK.value(), message, null);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
+	}
+	@GetMapping("/geturl")
+	public String getUrl(@RequestHeader String token)
+	{
+		return userService.getUrl(token);
 	}
 
 }

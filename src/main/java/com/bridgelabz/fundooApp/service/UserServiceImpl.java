@@ -16,6 +16,7 @@ import com.bridgelabz.fundooApp.repository.UserRepository;
 import com.bridgelabz.fundooApp.utility.EncryptUtil;
 import com.bridgelabz.fundooApp.utility.ITokenGenerator;
 import com.bridgelabz.fundooApp.utility.MailUtil;
+import com.bridgelabz.fundooApp.utility.RabbitMqUtil;
 
 /**
  * @author admin123
@@ -38,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	MailUtil mailsender;
+	
+	@Autowired
+	private RabbitMqUtil rabbitmq;
 
 	@Autowired
 	private ITokenGenerator tokenGenerator;
@@ -60,7 +64,8 @@ public class UserServiceImpl implements UserService {
 				email.setTo("musaddikshaikh10@gmail.com");
 				email.setSubject("Account verification");
 				email.setBody("Please verify your email id by using below link \n" + activationUrl);
-				mailsender.send(email);
+				//mailsender.send(email);
+				rabbitmq.rabbitSender(email);
 				return "Verification mail send successfully";
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -110,7 +115,8 @@ public class UserServiceImpl implements UserService {
 				email.setTo("musaddikshaikh5@gmail.com");
 				email.setSubject("resetPassword");
 				email.setBody("reset your password \n" + resetUrl);
-				mailsender.send(email);
+			//	mailsender.send(email);
+				rabbitmq.rabbitSender(email);
 				return "Mail sent";
 
 			} catch (Exception e) {
@@ -160,6 +166,17 @@ public class UserServiceImpl implements UserService {
 	private String getLink(StringBuffer requestUrl, String mappingUrl, String token) {
 		String url = requestUrl.substring(0, requestUrl.lastIndexOf("/")) + mappingUrl + token;
 		return url;
+	}
+	@Override
+	public String getUrl(String token) {
+		String userId=tokenGenerator.verifyToken(token);
+		Optional<User> optUser=userRepository.findById(userId);
+		if(optUser.isPresent())
+		{
+			User user=optUser.get();
+			return user.getImageUrl();
+		}
+		return null;
 	}
 
 }

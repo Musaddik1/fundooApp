@@ -1,7 +1,13 @@
 package com.bridgelabz.fundooApp.dto;
 
-public class Email {
+import java.io.Serializable;
+
+public class Email implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String emailId;
 	private String to;
 	private String subject;

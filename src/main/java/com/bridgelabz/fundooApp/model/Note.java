@@ -18,7 +18,7 @@ public class Note {
 	private boolean isTrash;
 	private boolean isArchive;
 	private boolean isPin;
-
+	private String noteColor;
 	@DBRef
 	private List<Label> labels;
 
@@ -119,6 +119,15 @@ public class Note {
 
 	public void setLabels(List<Label> labels) {
 		this.labels = labels;
+	}
+	
+	
+	public String getNoteColor() {
+		return noteColor;
+	}
+
+	public void setNoteColor(String noteColor) {
+		this.noteColor = noteColor;
 	}
 
 	@Override

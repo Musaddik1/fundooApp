@@ -18,4 +18,6 @@ public interface UserService {
 	
 	//String validateUser(String token);
 	String validateUser(String token);
+
+	String getUrl(String token);
 }

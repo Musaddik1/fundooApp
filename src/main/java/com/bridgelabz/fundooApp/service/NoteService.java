@@ -40,4 +40,5 @@ public interface NoteService {
 	List<Note> search(String text);
 	List<Note> getAllUserNote();
 	List<Label> getLabelOfNotes(String noteId,String token);
+	String setColor(String token,String noteId,String colorCode);
 }

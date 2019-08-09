@@ -5,7 +5,9 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import com.bridgelabz.fundooApp.service.AmazonService;
 
 @RestController
 @RequestMapping("/storage")
+@CrossOrigin(origins = "*",allowedHeaders = {"*"})
 public class BucketController {
 
 	@Autowired
@@ -34,4 +37,5 @@ public class BucketController {
 	  Response response=new Response(HttpStatus.OK.value(), message, null);
 	    return new ResponseEntity<Response>(response,HttpStatus.OK);
 	  }
+	
 }

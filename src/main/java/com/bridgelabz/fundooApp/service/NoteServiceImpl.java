@@ -44,8 +44,9 @@ public class NoteServiceImpl implements NoteService {
 			note.setCreationtTime(LocalDateTime.now());
 			note.setUpdateTime(LocalDateTime.now());
 			note.setUserId(userId);
-			noteRepository.save(note);
 			elasticSearch.createNote(note);
+			noteRepository.save(note);
+		
 			// return new Response(200, "note created ", null);
 			return "note created";
 
@@ -65,8 +66,8 @@ public class NoteServiceImpl implements NoteService {
 
 			note.setTitle(noteDto.getTitle());
 			note.setDescription(noteDto.getDescription());
+			elasticSearch.createNote(note);
 			noteRepository.save(note);
-			elasticSearch.updateNote(noteId);
 
 			return "note updated";
 
@@ -86,8 +87,9 @@ public class NoteServiceImpl implements NoteService {
 			optionalNote.filter(note -> {
 				return note.isTrash();
 			}).map(note -> {
-				noteRepository.delete(note);
+				
 				elasticSearch.deleteNote(noteId);
+				noteRepository.delete(note);
 				// return new Response(200, "deleted note", null);
 				return "deleted note";
 			}).orElseThrow(() -> new UserException("note not found"));
@@ -342,5 +344,32 @@ public class NoteServiceImpl implements NoteService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String setColor(String token, String noteId,String colorcode) {
+	
+		String userId=tokenGenerator.verifyToken(token);
+		//Optional<Note> optNote=noteRepository.findByNoteIdAndUserId(noteId, userId);
+		Optional<User> optUser=userRepository.findById(userId);
+		if(optUser.isPresent())
+		{
+			Optional<Note> optNote=noteRepository.findById(noteId);
+		if(optNote.isPresent())
+		{
+			Note note=optNote.get();
+			note.setNoteColor(colorcode);
+			elasticSearch.createNote(note);
+			noteRepository.save(note);
+			return "color set on note";
+		}
+		else
+		{
+			throw new NoteException("note not present");
+		}
+		}else
+		{
+			throw new UserException("user not present");
+		}
 	}
 }
